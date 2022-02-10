@@ -1,13 +1,14 @@
 from matplotlib import pyplot as plt
 
 
-def box_plot(losses, title=None, path=None):
+def box_plot(losses, title=None, path=None, fontsize="medium"):
     labels = losses.keys() # ["rb", "norb"]
     colors = ['pink', 'lightblue', 'silver', 'bisque', 'fushia', 'crimson']
 
     final_losses = [losses[label] for label in labels]
 
     fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(4, 4))
+    plt.xticks(rotation=45)
 
     bplot = ax.boxplot(final_losses,
                          vert=True,
@@ -19,7 +20,7 @@ def box_plot(losses, title=None, path=None):
 
     ax.yaxis.grid(True)
     ax.set_ylabel('Final Loss')
-    plt.legend()
+    plt.legend(fontsize=fontsize)
     if title is not None:
         plt.title(title)
 
