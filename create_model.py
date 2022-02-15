@@ -5,7 +5,7 @@ import torch.nn.functional as F
 device = torch.device('cpu')
 
 
-def create_model(X_all, n_classes=None, task_type="regression", model_name="mlp", optim="adam"):
+def create_model(X_all, n_classes=None, task_type="regression", model_name="mlp", optim="adam", x=None, y=None):
     if task_type == "multiclass":
         d_out = n_classes
     else:
@@ -54,6 +54,8 @@ def create_model(X_all, n_classes=None, task_type="regression", model_name="mlp"
     elif optim.lower() == "rmsprop":
         optimizer = torch.optim.RMSprop(_model.parameters(), lr=lr, weight_decay=weight_decay)
 
+
+
     #optimizer = (
     #    _model.make_default_optimizer()
     #    if isinstance(_model, rtdl.FTTransformer)
@@ -69,4 +71,15 @@ def create_model(X_all, n_classes=None, task_type="regression", model_name="mlp"
         if task_type == 'multiclass'
         else F.mse_loss
     )
+
+    def closure():
+        y_pred = _model(x)
+        loss = loss_fn(y_pred, y)
+        optimizer.zero_grad()
+        loss.backward()
+        return loss
+
+    optimizer.step(closure)
+
+
     return _model, optimizer, loss_fn
