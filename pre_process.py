@@ -45,14 +45,15 @@ labels = set(output)
 for c in df.columns:
     if (not c in cat_feat) and (c != "target"):
         df = df.drop(c, axis=1)
-
+print(dataset)
 for col in df.columns:
     if col != "target":
         df = one_hot_encode(df, col)
         df = df.drop(col, axis=1)
+print('###########')
 
 df["target"] = df["target"].apply(lambda x: str(x))
 
-df.to_csv(directory + "training_processed.csv", index=False)
+# df.to_csv(directory + "training_processed.csv", index=False)
 
 
