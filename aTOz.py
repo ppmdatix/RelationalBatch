@@ -87,7 +87,7 @@ for _k in range(k):
 
             if relational_batch:
 
-                model, optimizer, loss_fn =  create_model(X_all, n_classes=n_classes, task_type=task_type, model_name=model_name, optim=optim, x=X["train"], y=y["train"])
+                model, optimizer, loss_fn = create_model(X_all, n_classes=n_classes, task_type=task_type, model_name=model_name, optim=optim)
                 modelRB     = deepcopy(model)
                 optimizerRB = deepcopy(optimizer)
                 loss_fnRB     = deepcopy(loss_fn)
