@@ -134,6 +134,7 @@ def learn_that(_model, _optimizer, _loss_fn, _X, _y, y_std, _epochs, _batch_size
                                     ()
                                     # factors[i] = float('nan') * factors[i]
                         param.grad = torch.mul(param.grad, torch.transpose(factors,0,1))
+                        param.grad.dtype = optional
                         param.grad.apply_(lambda x: none_if_small(x))
 
             _optimizer.step()
