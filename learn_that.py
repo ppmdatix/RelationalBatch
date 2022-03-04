@@ -68,6 +68,17 @@ def evaluate(part, model, X, y, y_std, task_type="regression"):
     return score
 
 
+def none_if_small(x, epsilon=10e-4):
+    if abs(x < epsilon):
+        return None
+    else:
+        return  x
+def small_if_none(x):
+    if x is None:
+        return 0.0
+    else:
+        return  x
+
 def learn_that(_model, _optimizer, _loss_fn, _X, _y, y_std, _epochs, _batch_size, _relational_batch, _old_X, print_mode=False, _task_type="regression"):
     # Docs: https://yura52.github.io/zero/reference/api/zero.data.IndexLoader.html
 
@@ -123,8 +134,13 @@ def learn_that(_model, _optimizer, _loss_fn, _X, _y, y_std, _epochs, _batch_size
                                     ()
                                     # factors[i] = float('nan') * factors[i]
                         param.grad = torch.mul(param.grad, torch.transpose(factors,0,1))
+                        param.grad.apply_(lambda x: none_if_small(x))
 
             _optimizer.step()
+            if _relational_batch:
+                for name, param in _model.named_parameters():
+                    if name == "blocks.0.linear.weight":
+                        param.grad.apply_(lambda x: small_if_none(x))
             if iteration % report_frequency == 0:
                 batch = "batch"
                 if _relational_batch:
