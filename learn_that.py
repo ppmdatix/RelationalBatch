@@ -10,6 +10,8 @@ import sklearn.preprocessing
 import torch
 import zero
 
+from copy import deepcopy as deepcopy
+
 import os
 import sys
 
@@ -119,6 +121,7 @@ def learn_that(_model, _optimizer, _loss_fn, _X, _y, y_std, _epochs, _batch_size
 
             # Modify gradients
             if _relational_batch:
+                oldParams = []
                 for name, param in _model.named_parameters():
                     if name == "blocks.0.linear.weight":
                         column_count = len(_old_X['train'].columns)
@@ -134,14 +137,16 @@ def learn_that(_model, _optimizer, _loss_fn, _X, _y, y_std, _epochs, _batch_size
                                     ()
                                     # factors[i] = float('nan') * factors[i]
                         param.grad = torch.mul(param.grad, torch.transpose(factors,0,1))
-                        param.grad.dtype = optional
-                        param.grad.apply_(lambda x: none_if_small(x))
+                        oldParams.append(deepcopy(param))
+                        
 
             _optimizer.step()
             if _relational_batch:
+                i = 0
                 for name, param in _model.named_parameters():
                     if name == "blocks.0.linear.weight":
-                        param.grad.apply_(lambda x: small_if_none(x))
+                        param = torch.where(param.grad = 0, oldParams[i], param)
+                        i += 1
             if iteration % report_frequency == 0:
                 batch = "batch"
                 if _relational_batch:
