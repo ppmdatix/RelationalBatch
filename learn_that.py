@@ -145,7 +145,7 @@ def learn_that(_model, _optimizer, _loss_fn, _X, _y, y_std, _epochs, _batch_size
                 i = 0
                 for name, param in _model.named_parameters():
                     if name == "blocks.0.linear.weight":
-                        param = torch.where(param.grad = 0, oldParams[i], param)
+                        param = torch.where(param.grad == 0, oldParams[i], param)
                         i += 1
             if iteration % report_frequency == 0:
                 batch = "batch"
