@@ -49,6 +49,8 @@ def create_model(X_all, n_classes=None, task_type="regression", model_name="mlp"
         optimizer = torch.optim.Adam(_model.parameters(), lr=lr, weight_decay=weight_decay)
     elif optim.lower() == "adagrad":
         optimizer = torch.optim.Adagrad(_model.parameters(), lr=lr, weight_decay=weight_decay)
+    elif optim.lower() == "sgd":
+        optimizer = torch.optim.SGD(_model.parameters(), lr=lr, momentum=0, dampening=0, weight_decay=0, nesterov=False)
     elif optim.lower() == "lbfgs":
         optimizer = torch.optim.LBFGS(_model.parameters(), lr=lr)
     elif optim.lower() == "rmsprop":
