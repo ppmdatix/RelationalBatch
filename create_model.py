@@ -1,28 +1,35 @@
 import rtdl
 import torch
 import torch.nn.functional as F
+import rtdl
 
 device = torch.device('cpu')
 
 
-def create_model(X_all, n_classes=None, task_type="regression", model_name="mlp", optim="adam"):
+def create_model(
+        X_all,
+        n_classes=None,
+        task_type="regression",
+        model_name="mlp",
+        optim="adam",
+        lr=0.001,
+        weight_decay=0.0,
+        first_layer=4,
+        middle_layers=8,
+        dropout=0.1):
+
     if task_type == "multiclass":
         d_out = n_classes
     else:
         d_out = n_classes or 1
 
-    lr = 0.001
-    weight_decay = 0.0
-
-    first_layer = 4
     if model_name == "mlp":
+
         _model = rtdl.MLP.make_baseline(
             d_in=X_all.shape[1],
-        #     d_layers=[first_layer, 256, 128],
-            d_layers=[first_layer, 8, first_layer],
-            dropout=0.1,
-            d_out=d_out,
-            # seed=42
+            d_layers=[first_layer, middle_layers, first_layer],
+            dropout=dropout,
+            d_out=d_out
         )
     elif model_name == "resnet":
         _model = rtdl.ResNet.make_baseline(

@@ -21,6 +21,8 @@ sys.path.insert(1, '/Users/ppx/Desktop/PhD/rtdl')
 
 from lib.deep import IndexLoader
 import pandas as pd
+import rtdl
+
 
 
 
