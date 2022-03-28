@@ -142,7 +142,7 @@ def learn_that(_model, _optimizer, _loss_fn, _X, _y, y_std, _epochs, _batch_size
                         oldParams.append(deepcopy(param))
 
             if sparse:
-                for p in model.parameters():
+                for p in _model.parameters():
                     p.grad = p.grad.to_sparse()
                     
             _optimizer.step()
