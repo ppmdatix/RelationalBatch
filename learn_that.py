@@ -146,7 +146,7 @@ def learn_that(_model, _optimizer, _loss_fn, _X, _y, y_std, _epochs, _batch_size
                     p.grad = p.grad.to_sparse()
                     
             _optimizer.step()
-            if _relational_batch:
+            if _relational_batch and not(sparse):
                 i = 0
                 for name, param in _model.named_parameters():
                     if name == "blocks.0.linear.weight":
