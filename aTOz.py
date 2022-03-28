@@ -94,6 +94,8 @@ for _k in range(k):
             else:
                 model, optimizer, loss_fn = modelRB, optimizerRB, loss_fnRB
 
+            sparse = optim == "sparse_adam"
+
             losses = learn_that(
                         model,
                         optimizer,
@@ -106,7 +108,8 @@ for _k in range(k):
                         relational_batch,
                         old_x,
                         print_mode=False,
-                        _task_type=task_type)
+                        _task_type=task_type,
+                        sparse=sparse)
             if relational_batch:
                 results["rb-"+optim].append(losses["test"][-1])
             else:

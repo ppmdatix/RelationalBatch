@@ -83,7 +83,7 @@ def small_if_none(x):
     else:
         return  x
 
-def learn_that(_model, _optimizer, _loss_fn, _X, _y, y_std, _epochs, _batch_size, _relational_batch, _old_X, print_mode=False, _task_type="regression"):
+def learn_that(_model, _optimizer, _loss_fn, _X, _y, y_std, _epochs, _batch_size, _relational_batch, _old_X, print_mode=False, _task_type="regression", sparse=False):
     # Docs: https://yura52.github.io/zero/reference/api/zero.data.IndexLoader.html
 
 
@@ -110,7 +110,7 @@ def learn_that(_model, _optimizer, _loss_fn, _X, _y, y_std, _epochs, _batch_size
             batch_idx = permutation[iteration:iteration + batch_size]
             # x_batch, y_batch = _X['train'][batch_idx], _y['train'][batch_idx]
 
-        #for iteration, batch_idx in enumerate(train_loader):
+            #for iteration, batch_idx in enumerate(train_loader):
             _model.train()
             _optimizer.zero_grad()
             x_batch = _X['train'][batch_idx]
@@ -140,8 +140,11 @@ def learn_that(_model, _optimizer, _loss_fn, _X, _y, y_std, _epochs, _batch_size
                                     # factors[i] = float('nan') * factors[i]
                         param.grad = torch.mul(param.grad, torch.transpose(factors,0,1))
                         oldParams.append(deepcopy(param))
-                        
 
+            if optim == "sparse":
+                for p in model.parameters():
+                    p.grad = p.grad.to_sparse()
+                    
             _optimizer.step()
             if _relational_batch:
                 i = 0
