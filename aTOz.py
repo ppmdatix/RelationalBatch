@@ -13,7 +13,7 @@ dataset = sys.argv[1]
 
 nrows = None
 
-optims = ["sparse_adam" ]# , "SGD", "adam", "adagrad", ]
+optims = ["sparse_adam" ]# , "SGD", "adam", "adagrad" ]
 
 
 if dataset.lower() == "kdd":
