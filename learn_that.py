@@ -72,29 +72,11 @@ def evaluate(part, model, X, y, y_std, task_type="regression"):
     return score
 
 
-def none_if_small(x, epsilon=10e-4):
-    if abs(x < epsilon):
-        return None
-    else:
-        return  x
-def small_if_none(x):
-    if x is None:
-        return 0.0
-    else:
-        return  x
 
-def learn_that(_model, _optimizer, _loss_fn, _X, _y, y_std, _epochs, _batch_size, _relational_batch, _old_X, print_mode=False, _task_type="regression", sparse=False):
-    # Docs: https://yura52.github.io/zero/reference/api/zero.data.IndexLoader.html
-
-
-    batch_size = 256
-    train_loader = IndexLoader(len(_X['train']), batch_size, device=device, shuffle=False)
+def learn_that(_model, _optimizer, _loss_fn, _X, _y, _epochs, _batch_size, _gse, _old_X, print_mode=False, _task_type="regression", sparse=False):
 
     if print_mode:
         print(f'Test score before training: {evaluate("test", _model):.4f}')
-
-
-
 
     report_frequency = len(_X['train']) // _batch_size // 5
     losses = dict()
@@ -105,10 +87,9 @@ def learn_that(_model, _optimizer, _loss_fn, _X, _y, y_std, _epochs, _batch_size
         # X is a torch Variable
         permutation = torch.randperm(_X['train'].size()[0])
 
-        for iteration in range(0, _X['train'].size()[0], batch_size):
+        for iteration in range(0, _X['train'].size()[0], _batch_size):
 
-            batch_idx = permutation[iteration:iteration + batch_size]
-            # x_batch, y_batch = _X['train'][batch_idx], _y['train'][batch_idx]
+            batch_idx = permutation[iteration:iteration + _batch_size]
 
             #for iteration, batch_idx in enumerate(train_loader):
             _model.train()
@@ -119,50 +100,44 @@ def learn_that(_model, _optimizer, _loss_fn, _X, _y, y_std, _epochs, _batch_size
             loss = _loss_fn(apply_model(x_batch, model=_model).squeeze(1), y_batch)
             loss.backward()
 
-            factors = dict()
 
             # Modify gradients
-            if _relational_batch:
-                oldParams = []
+            if _gse:
+                old_params = []
                 for name, param in _model.named_parameters():
                     if name == "blocks.0.linear.weight":
                         column_count = len(_old_X['train'].columns)
                         factors = torch.ones(column_count,param.grad.shape[0])
                         for i in range(column_count):
-                            column = _old_X['train'].columns[i]
-                            if True:  # not column in oldNames:
-                                idx = _old_X['train'][iteration * batch_size:(iteration+1) * batch_size].columns[i]
-                                realCount = _old_X['train'][iteration * batch_size:(iteration+1) * batch_size][idx].sum()
-                                if realCount > 0:
-                                    factors[i] = (batch_size / (1.0 * realCount)) * factors[i]
-                                else:
-                                    ()
-                                    # factors[i] = float('nan') * factors[i]
+                            idx = _old_X['train'][iteration * _batch_size:(iteration+1) * _batch_size].columns[i]
+                            real_count = _old_X['train'][iteration * _batch_size:(iteration+1) * _batch_size][idx].sum()
+                            if realCount > 0:
+                                factors[i] = (_batch_size / (1.0 * real_count)) * factors[i]
                         param.grad = torch.mul(param.grad, torch.transpose(factors,0,1))
-                        oldParams.append(deepcopy(param))
+                        old_params.append(deepcopy(param))
 
             if sparse:
                 for p in _model.parameters():
                     p.grad = p.grad.to_sparse()
                     
             _optimizer.step()
-            if _relational_batch and not(sparse):
+            if _gse and not sparse:
                 i = 0
                 for name, param in _model.named_parameters():
                     if name == "blocks.0.linear.weight":
-                        param = torch.where(param.grad == 0, oldParams[i], param)
+                        param = torch.where(param.grad == 0, old_params[i], param)
                         i += 1
             if iteration % report_frequency == 0:
                 batch = "batch"
-                if _relational_batch:
-                    batch= "relational-batch"
+                if _gse:
+                    batch= "gse-batch"
                 if print_mode:
                     print(f'(epoch) {epoch} ({batch}) {iteration} (loss) {loss.item():.4f}')
 
-        losses['val'].append(float(_loss_fn(apply_model(_X['val'],model=_model).squeeze(1), _y['val'])))
-        losses['test'].append(float(_loss_fn(apply_model(_X['test'],model=_model).squeeze(1), _y['test'])))
+        losses['val'].append(float(_loss_fn(apply_model(_X['val'],   model=_model).squeeze(1), _y['val'])))
+        losses['test'].append(float(_loss_fn(apply_model(_X['test'], model=_model).squeeze(1), _y['test'])))
 
-        val_score  = evaluate("val", _model, _X, _y, y_std, task_type=_task_type)
-        test_score = evaluate("test", _model, _X, _y, y_std, task_type=_task_type)
+        # val_score  = evaluate("val", _model, _X, _y, y_std, task_type=_task_type)
+        # test_score = evaluate("test", _model, _X, _y, y_std, task_type=_task_type)
 
     return losses

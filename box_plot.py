@@ -1,9 +1,10 @@
 from matplotlib import pyplot as plt
+from data import data as dta
 
 
 def box_plot(losses, title=None, path=None, fontsize="medium"):
-    labels = losses.keys() # ["rb", "norb"]
-    colors = ['pink', 'lightblue', 'silver', 'bisque', 'fushia', 'crimson']
+    labels = losses.keys()
+    colors = dta.colors
 
     final_losses = [losses[label] for label in labels]
 

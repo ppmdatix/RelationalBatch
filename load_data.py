@@ -30,8 +30,7 @@ def load_data(path, target_name="target", task_type="multiclass", nrows=None):
     for t in target:
         result.append(target_mapping[t])
 
-    df_format = {"target": pd.DataFrame(result).values.reshape(df.shape[0]), "data": df.drop(target_name, axis=1),
-                 "frame": None, "DESCR": "Todo", "feature_names": []}
+    df_format = {"target": pd.DataFrame(result).values.reshape(df.shape[0]), "data": df.drop(target_name, axis=1) }
 
     assert task_type in ['binclass', 'multiclass', 'regression']
 
@@ -39,7 +38,6 @@ def load_data(path, target_name="target", task_type="multiclass", nrows=None):
     y_all = df_format['target'].astype('float32' if task_type == 'regression' else 'int64')
     if task_type != 'regression':
         y_all = sklearn.preprocessing.LabelEncoder().fit_transform(y_all).astype('int64')
-    n_classes = int(max(y_all)) + 1 if task_type == 'multiclass' else None
 
     old_x = {}
     y = dict()
@@ -57,7 +55,6 @@ def load_data(path, target_name="target", task_type="multiclass", nrows=None):
         k: torch.tensor(preprocess.fit_transform(v), device=device)
         for k, v in old_x.items()
     }
-    # y = {k: torch.tensor(np.array(v), device=device) for k, v in y.items()}
     y = {k: torch.tensor(to_y(v), device=device) for k, v in y.items()}
 
     # !!! CRUCIAL for neural networks when solving regression problems !!!
@@ -66,7 +63,7 @@ def load_data(path, target_name="target", task_type="multiclass", nrows=None):
         y_std = y['train'].std().item()
         y = {k: (v - y_mean) / y_std for k, v in y.items()}
     else:
-        y_std = y_mean = None
+        y_std = None
 
     if task_type != 'multiclass':
         y = {k: v.float() for k, v in y.items()}

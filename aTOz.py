@@ -6,52 +6,20 @@ import sys
 import pandas as pd
 from box_plot import box_plot
 from copy import deepcopy
+from data import data as dta
 
+dataset = sys.argv[1].lower()
 
-
-dataset = sys.argv[1]
 
 nrows = None
+optims = dta.optims
 
-optims = ["sparse_adam" ]# , "SGD", "adam", "adagrad" ]
-
-
-if dataset.lower() == "kdd":
-    dataDir = "data/KDD99/"
-    path = dataDir + "training_processed.csv"# "fetch_kddcup99.csv"
-    resDir = "results/KDD99/"
-    target = "labels"
-elif dataset.lower() == "forest_cover":
-    dataDir = "data/Forest_Cover/"
-    path = dataDir + "training_processed.csv"# "forest_cover.csv"
-    resDir = "results/Forest_Cover/"
-    target = "Cover_Type"
-elif dataset.lower() == "adult_income":
-    dataDir = "data/Adult_Income/"
-    path = dataDir + "training_processed.csv"# "forest_cover.csv"
-    resDir = "results/Adult_Income/"
-    target = "target"
-elif dataset.lower() == "dont_get_kicked":
-    dataDir = "data/Dont_Get_Kicked/"
-    path = dataDir + "training_processed.csv"# "forest_cover.csv"
-    resDir = "results/Dont_Get_Kicked/"
-    target = "target"
-    nrows = 10000
-elif dataset.lower() == "used_cars":
-    dataDir = "data/Usedcarscatalog/"
-    path = dataDir + "training_processed.csv"# "forest_cover.csv"
-    resDir = "results/Usedcarscatalog/"
-    target = "price_usd"
-elif dataset.lower() == "compas":
-    dataDir = "data/compas/"
-    path = dataDir + "training_processed.csv"#
-    resDir = "results/compas/"
-    target = "is_recid"
+dataDir = "data/" + dta.folderName[dataset] + "/"
+path    = dataDir + "training_processed.csv"
+resDir  = "results/" + dta.folderName[dataset] + "/"
+target  = dta.targets[dataset]
 
 
-
-else:
-    raise Exception('no such dataset')
 
 task_type  = sys.argv[2]
 model_name = sys.argv[3]
@@ -63,9 +31,6 @@ target_name = "target"
 if len(sys.argv) > 7:
     target_name = sys.argv[7]
 
-
-
-
 X, y, old_x, X_all, y_std, target_values = \
     load_data(path, task_type=task_type, target_name=target_name, nrows=nrows)
 
@@ -74,49 +39,43 @@ if task_type == "multiclass":
 else:
     n_classes = None
 
-results = {} # "rb": [], "norb": []}
-for optim in optims:
-    results["rb-"+optim] = []
-    results["norb-"+optim] = []
+results = {"gse-"+o: [] for o in optims}
 
 
 for _k in range(k):
     print(str(k) + "\n")
     for optim in optims:
-        for relational_batch in [True, False]:
+        for gse in [True, False]:
 
-            if relational_batch:
+            if gse:
 
                 model, optimizer, loss_fn = create_model(X_all, n_classes=n_classes, task_type=task_type, model_name=model_name, optim=optim)
-                modelRB     = deepcopy(model)
-                optimizerRB = deepcopy(optimizer)
-                loss_fnRB     = deepcopy(loss_fn)
+                modelGSE     = deepcopy(model)
+                optimizerGSE = deepcopy(optimizer)
+                loss_fnGSE   = deepcopy(loss_fn)
             else:
-                model, optimizer, loss_fn = modelRB, optimizerRB, loss_fnRB
-
-            sparse = optim == "sparse_adam"
+                model, optimizer, loss_fn = modelGSE, optimizerGSE, loss_fnGSE
 
             losses = learn_that(
                         model,
                         optimizer,
                         loss_fn,
                         X,
-                        y,
-                        y_std,
+                        y, 
                         epochs,
                         batch_size,
-                        relational_batch,
+                        gse,
                         old_x,
                         print_mode=False,
                         _task_type=task_type,
-                        sparse=sparse)
-            if relational_batch:
-                results["rb-"+optim].append(losses["test"][-1])
+                        sparse=optim == "sparse_adam")
+            if gse:
+                results["gse-"+optim].append(losses["test"][-1])
             else:
-                results["norb-"+optim].append(losses["test"][-1])
-            title = dataset + "-relationalBatch:" + str(relational_batch)
+                results["no_gse-"+optim].append(losses["test"][-1])
+            title = dataset + "-gse:" + str(gse)
             if _k == 1:
-                plot_path = create_path(resDir, model_name + "withOptimoo"+optim, epochs, batch_size, relational_batch)
+                plot_path = create_path(resDir, model_name + "withOptimoo"+optim, epochs, batch_size, gse)
                 plot_losses(losses, title=title, path=plot_path)
 
                 df = pd.DataFrame(losses)

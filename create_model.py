@@ -24,7 +24,6 @@ def create_model(
         d_out = n_classes or 1
 
     if model_name == "mlp":
-
         _model = rtdl.MLP.make_baseline(
             d_in=X_all.shape[1],
             d_layers=[first_layer, middle_layers, first_layer],
@@ -65,16 +64,8 @@ def create_model(
     elif optim.lower() == "sparse_adam":
         optimizer = torch.optim.SparseAdam(list(_model.parameters()), lr=lr)
 
-    #optimizer = (
-    #    _model.make_default_optimizer()
-    #    if isinstance(_model, rtdl.FTTransformer)
-    #     else torch.optim.AdamW(_model.parameters(), lr=lr, weight_decay=weight_decay)
-    #    else torch.optim.Adam(_model.parameters(), lr=lr, weight_decay=weight_decay)
-    #)
-
     loss_fn = (
         F.mse_loss
-        # F.binary_cross_entropy_with_logits
         if task_type == 'binclass'
         else F.cross_entropy
         if task_type == 'multiclass'
