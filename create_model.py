@@ -49,7 +49,6 @@ def create_model(
 
     _model.to(device)
 
-    optimizer = None
 
     if optim.lower() == "adam":
         optimizer = torch.optim.Adam(_model.parameters(), lr=lr, weight_decay=weight_decay)
@@ -63,6 +62,8 @@ def create_model(
         optimizer = torch.optim.RMSprop(_model.parameters(), lr=lr, weight_decay=weight_decay)
     elif optim.lower() == "sparse_adam":
         optimizer = torch.optim.SparseAdam(list(_model.parameters()), lr=lr)
+    else:
+        raise Exception('no such optimizer: ' + optim)
 
     loss_fn = (
         F.mse_loss

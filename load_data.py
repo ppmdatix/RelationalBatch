@@ -16,7 +16,7 @@ def to_y(_data):
         return _data.values
 
 
-def load_data(path, target_name="target", task_type="multiclass", nrows=None):
+def load_data(path, target_name="target", task_type="multiclass", nrows=None, train_size=0.8):
     df = pd.read_csv(path, nrows=nrows)
 
     target = df[target_name].values
@@ -42,10 +42,10 @@ def load_data(path, target_name="target", task_type="multiclass", nrows=None):
     old_x = {}
     y = dict()
     old_x['train'], old_x['test'], y['train'], y['test'] = sklearn.model_selection.train_test_split(
-        X_all, y_all, train_size=0.8
+        X_all, y_all, train_size=train_size
     )
     old_x['train'], old_x['val'], y['train'], y['val'] = sklearn.model_selection.train_test_split(
-        old_x['train'], y['train'], train_size=0.8
+        old_x['train'], y['train'], train_size=train_size
     )
 
     # not the best way to preprocess features, but enough for the demonstration

@@ -1,5 +1,5 @@
-# Relational Batch
-This repository is related to *Stochastic Gradient Descent on Categorical Data*.
+# Gradient estimator for symbolical features
+This repository is related to *Stochastic Gradient Descent with gradient estimator for symbolical features*.
 
 ## Setup the environment
 ###  PyTorch environment
@@ -35,6 +35,14 @@ to reproduce an experiment, run
 ```
  python aTOz.py <dataset> <task> <model_name> <epoch> <batch_size> <k>
 ```
+
+to reproduce **all** experiments with the `data/data.py` settings, run
+
+```
+ python launch.py
+```
+
+
 
 supported datasets:
 - `kdd`

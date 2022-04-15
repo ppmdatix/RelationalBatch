@@ -2,33 +2,19 @@ import pandas as pd
 import csv
 import sys
 from one_hot_encode import one_hot_encode
+from data import data as dta
 
 
 directory = sys.argv[1]
-dataset = sys.argv[2]
+dataset = sys.argv[2].lower()
 
-if dataset.lower() == "kdd":
-    path = directory + "fetch_kddcup99.csv"
-    target = "labels"
-elif dataset.lower() == "forest_cover":
-    path = directory + "forest_cover.csv"
-    target = "Cover_Type"
-elif dataset.lower() == "adult_income":
-    path = directory + "adult.csv"
-    target = "income"
-elif dataset.lower() == "dont_get_kicked":
-    path = directory + "dontgetkicked.csv"
-    target = "IsBadBuy"
-elif dataset.lower() == "used_cars":
-    path = directory + "cars.csv"
-    target = "price_usd"
-elif dataset.lower() == "compas":
-    path = directory + "compas-scores-two-years.csv"
-    target = "is_recid"
 
-else:
-    raise Exception('no such dataset')
+path    = directory + dta.sourceFiles[dataset]
+target  = dta.sourceTargets[dataset]
+
+
 category_features_file = "categorical_features.csv"
+output_file = "training_processed.csv"
 
 
 with open(directory + category_features_file, newline='') as f:
@@ -50,10 +36,9 @@ for col in df.columns:
     if col != "target":
         df = one_hot_encode(df, col)
         df = df.drop(col, axis=1)
-print('###########')
 
 df["target"] = df["target"].apply(lambda x: str(x))
 
-# df.to_csv(directory + "training_processed.csv", index=False)
+df.to_csv(directory + output_file, index=False)
 
 

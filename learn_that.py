@@ -24,8 +24,6 @@ import pandas as pd
 import rtdl
 
 
-
-
 device = torch.device('cpu')
 
 
@@ -79,9 +77,8 @@ def learn_that(_model, _optimizer, _loss_fn, _X, _y, _epochs, _batch_size, _gse,
         print(f'Test score before training: {evaluate("test", _model):.4f}')
 
     report_frequency = len(_X['train']) // _batch_size // 5
-    losses = dict()
-    losses['val'] = []
-    losses['test'] = []
+
+    losses = {"val": [], "test": []}
     for epoch in range(1, _epochs + 1):
 
         # X is a torch Variable

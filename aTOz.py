@@ -46,9 +46,7 @@ for _k in range(k):
     print(str(k) + "\n")
     for optim in optims:
         for gse in [True, False]:
-
             if gse:
-
                 model, optimizer, loss_fn = create_model(X_all, n_classes=n_classes, task_type=task_type, model_name=model_name, optim=optim)
                 modelGSE     = deepcopy(model)
                 optimizerGSE = deepcopy(optimizer)
@@ -73,15 +71,14 @@ for _k in range(k):
                 results["gse-"+optim].append(losses["test"][-1])
             else:
                 results["no_gse-"+optim].append(losses["test"][-1])
-            title = dataset + "-gse:" + str(gse)
+
             if _k == 1:
                 plot_path = create_path(resDir, model_name + "withOptimoo"+optim, epochs, batch_size, gse)
+                title = dataset + "-gse:" + str(gse)
                 plot_losses(losses, title=title, path=plot_path)
-
                 df = pd.DataFrame(losses)
-
                 df.to_csv(plot_path + '.csv', index=False)
 if k > 1:
-    save_path = create_path(resDir, model_name+ "withOptimoo"+optim,epochs, batch_size, k)
+    save_path = create_path(resDir, model_name+ "withOptimoo"+optim, epochs, batch_size, k)
     print(results)
     box_plot(results, path=save_path)

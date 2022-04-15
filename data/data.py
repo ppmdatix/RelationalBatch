@@ -1,5 +1,5 @@
 datasets = ["kdd", "forest_cover", "adult_income", "dont_get_kicked", "used_cars", "compas"]
-colors = ['pink', 'lightblue', 'silver', 'bisque', 'fushia', 'crimson']
+colors   = ['pink', 'lightblue', 'silver', 'bisque', 'fushia', 'crimson']
 
 
 task_types = {
@@ -19,6 +19,23 @@ folderName = {
                 "used_cars":       "Usedcarscatalog",
                 "compas":          "compas" }
 
+sourceFiles = {
+                "kdd":             "fetch_kddcup99.csv",
+                "forest_cover":    "forest_cover.csv",
+                "adult_income":    "adult.csv",
+                "dont_get_kicked": "dontgetkicked.csv",
+                "used_cars":       "cars.csv",
+                "compas":          "compas-scores-two-years.csv" }
+
+
+sourceTargets = {
+                "kdd":             "labels",
+                "forest_cover":    "Cover_Type",
+                "adult_income":    "income",
+                "dont_get_kicked": "IsBadBuy",
+                "used_cars":       "price_usd",
+                "compas":          "is_recid" }
+
 
 targets = {
                 "kdd":             "labels",
@@ -29,10 +46,8 @@ targets = {
                 "compas":          "is_recid" }
 
 
-
-
 models = ["mlp", "resnet"]
 optims = ["SGD", "adam", "adagrad" ]
-batch_sizes = [1, 8,32, 128]
+batch_sizes = [1, 8, 32, 128]
 epochs = 10
 reproduction = 10
