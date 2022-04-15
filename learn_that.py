@@ -111,7 +111,7 @@ def learn_that(_model, _optimizer, _loss_fn, _X, _y, _epochs, _batch_size, _gse,
                         for i in range(column_count):
                             idx = _old_X['train'][iteration * _batch_size:(iteration+1) * _batch_size].columns[i]
                             real_count = _old_X['train'][iteration * _batch_size:(iteration+1) * _batch_size][idx].sum()
-                            if realCount > 0:
+                            if real_count > 0:
                                 factors[i] = (_batch_size / (1.0 * real_count)) * factors[i]
                         param.grad = torch.mul(param.grad, torch.transpose(factors,0,1))
                         old_params.append(deepcopy(param))

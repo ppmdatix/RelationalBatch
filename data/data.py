@@ -32,7 +32,7 @@ targets = {
 
 
 models = ["mlp", "resnet"]
-optims = ["sparse_adam" ]# , "SGD", "adam", "adagrad" ]
+optims = ["SGD", "adam", "adagrad" ]
 batch_sizes = [1, 8,32, 128]
 epochs = 10
 reproduction = 10
