@@ -3,7 +3,7 @@ colors = ['pink', 'lightblue', 'silver', 'bisque', 'fushia', 'crimson']
 
 
 task_types = {
-                "kdd":             "muliclass",
+                "kdd":             "multiclass",
                 "forest_cover":    "multiclass",
                 "adult_income":    "binclass",
                 "dont_get_kicked": "binclass",
