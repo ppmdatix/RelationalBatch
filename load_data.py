@@ -5,8 +5,7 @@ import sklearn.metrics
 import sklearn.model_selection
 import sklearn.preprocessing
 import torch
-
-device = torch.device('cpu')
+from data import data as dta
 
 
 def to_y(_data):
@@ -51,11 +50,10 @@ def load_data(path, target_name="target", task_type="multiclass", nrows=None, tr
     # not the best way to preprocess features, but enough for the demonstration
     preprocess = sklearn.preprocessing.StandardScaler().fit(old_x['train'])
     X = {
-        # k: torch.tensor(v, device=device)
-        k: torch.tensor(preprocess.fit_transform(v), device=device)
+        k: torch.tensor(preprocess.fit_transform(v), device=dta.device)
         for k, v in old_x.items()
     }
-    y = {k: torch.tensor(to_y(v), device=device) for k, v in y.items()}
+    y = {k: torch.tensor(to_y(v), device=dta.device) for k, v in y.items()}
 
     # !!! CRUCIAL for neural networks when solving regression problems !!!
     if task_type == 'regression':

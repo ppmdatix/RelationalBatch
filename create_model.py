@@ -2,8 +2,8 @@ import rtdl
 import torch
 import torch.nn.functional as F
 import rtdl
+from data import data as dta
 
-device = torch.device('cpu')
 
 
 def create_model(
@@ -47,7 +47,7 @@ def create_model(
             d_out=d_out,
         )
 
-    _model.to(device)
+    _model.to(dta.device)
 
 
     if optim.lower() == "adam":

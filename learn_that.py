@@ -22,9 +22,8 @@ sys.path.insert(1, '/Users/ppx/Desktop/PhD/rtdl')
 from lib.deep import IndexLoader
 import pandas as pd
 import rtdl
+from data import data as dta
 
-
-device = torch.device('cpu')
 
 
 def apply_model(x_num, x_cat=None, model=None):

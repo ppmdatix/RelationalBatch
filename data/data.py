@@ -1,3 +1,7 @@
+import torch
+
+device = torch.device('cpu')
+
 datasets = ["kdd", "forest_cover", "adult_income", "dont_get_kicked", "used_cars", "compas"]
 colors   = ['pink', 'lightblue', 'silver', 'bisque', 'fushia', 'crimson']
 
