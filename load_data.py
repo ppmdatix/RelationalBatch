@@ -20,10 +20,8 @@ def load_data(path, target_name="target", task_type="multiclass", nrows=None, tr
 
     target = df[target_name].values
     target_values = list(set(target))
-    target_mapping = dict()
 
-    for i in range(len(target_values)):
-        target_mapping[target_values[i]] = i
+    target_mapping = {target_values[i] : i for i in range(len(target_values))}
 
     result = []
     for t in target:
@@ -58,8 +56,8 @@ def load_data(path, target_name="target", task_type="multiclass", nrows=None, tr
     # !!! CRUCIAL for neural networks when solving regression problems !!!
     if task_type == 'regression':
         y_mean = y['train'].mean().item()
-        y_std = y['train'].std().item()
-        y = {k: (v - y_mean) / y_std for k, v in y.items()}
+        y_std  = y['train'].std().item()
+        y      = {k: (v - y_mean) / y_std for k, v in y.items()}
     else:
         y_std = None
 

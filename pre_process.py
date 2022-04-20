@@ -13,11 +13,7 @@ path    = directory + dta.sourceFiles[dataset]
 target  = dta.sourceTargets[dataset]
 
 
-category_features_file = "categorical_features.csv"
-output_file = "training_processed.csv"
-
-
-with open(directory + category_features_file, newline='') as f:
+with open(directory + dta.category_features_file, newline='') as f:
     reader = csv.reader(f)
     cat_feat = list(reader)[0]
 
@@ -39,6 +35,6 @@ for col in df.columns:
 
 df["target"] = df["target"].apply(lambda x: str(x))
 
-df.to_csv(directory + output_file, index=False)
+df.to_csv(directory + dta.output_file, index=False)
 
 

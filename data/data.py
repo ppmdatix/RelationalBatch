@@ -55,3 +55,6 @@ optims = ["SGD", "adam", "adagrad" ]
 batch_sizes = [1, 8, 32, 128]
 epochs = 10
 reproduction = 10
+png_prefix = "withOptimoo"
+category_features_file = "categorical_features.csv"
+output_file = "training_processed.csv"

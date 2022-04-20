@@ -3,10 +3,10 @@ from matplotlib import pyplot as plt
 
 
 def create_path(data_path, model, e, bs, rb):
-    result = data_path + "/"
-    result += "model" + str(model) + "-"
-    result += "epochs" + str(e) + "-"
-    result += "batch-size" + str(bs) + "-"
+    result = data_path           + "/"
+    result += "model"            + str(model) + "-"
+    result += "epochs"           + str(e) + "-"
+    result += "batch-size"       + str(bs) + "-"
     result += "relational-batch" + str(rb)
 
     return result

@@ -17,7 +17,7 @@ import sys
 
 import sys
 # insert at 1, 0 is the script path (or '' in REPL)
-sys.path.insert(1, '/Users/ppx/Desktop/PhD/rtdl')
+# sys.path.insert(1, '/Users/ppx/Desktop/PhD/rtdl')
 
 from lib.deep import IndexLoader
 import pandas as pd
@@ -70,7 +70,7 @@ def evaluate(part, model, X, y, y_std, task_type="regression"):
 
 
 
-def learn_that(_model, _optimizer, _loss_fn, _X, _y, _epochs, _batch_size, _gse, _old_X, print_mode=False, _task_type="regression", sparse=False):
+def learn_that(_model, _optimizer, _loss_fn, _X, _y, _epochs, _batch_size, _gse, _old_x, print_mode=False, _task_type="regression", sparse=False):
 
     if print_mode:
         print(f'Test score before training: {evaluate("test", _model):.4f}')
@@ -80,14 +80,12 @@ def learn_that(_model, _optimizer, _loss_fn, _X, _y, _epochs, _batch_size, _gse,
     losses = {"val": [], "test": []}
     for epoch in range(1, _epochs + 1):
 
-        # X is a torch Variable
         permutation = torch.randperm(_X['train'].size()[0])
 
         for iteration in range(0, _X['train'].size()[0], _batch_size):
 
             batch_idx = permutation[iteration:iteration + _batch_size]
 
-            #for iteration, batch_idx in enumerate(train_loader):
             _model.train()
             _optimizer.zero_grad()
             x_batch = _X['train'][batch_idx]
@@ -102,11 +100,11 @@ def learn_that(_model, _optimizer, _loss_fn, _X, _y, _epochs, _batch_size, _gse,
                 old_params = []
                 for name, param in _model.named_parameters():
                     if name == "blocks.0.linear.weight":
-                        column_count = len(_old_X['train'].columns)
+                        column_count = len(_old_x['train'].columns)
                         factors = torch.ones(column_count,param.grad.shape[0])
                         for i in range(column_count):
-                            idx = _old_X['train'][iteration * _batch_size:(iteration+1) * _batch_size].columns[i]
-                            real_count = _old_X['train'][iteration * _batch_size:(iteration+1) * _batch_size][idx].sum()
+                            idx = _old_x['train'][iteration * _batch_size:(iteration+1) * _batch_size].columns[i]
+                            real_count = _old_x['train'][iteration * _batch_size:(iteration+1) * _batch_size][idx].sum()
                             if real_count > 0:
                                 factors[i] = (_batch_size / (1.0 * real_count)) * factors[i]
                         param.grad = torch.mul(param.grad, torch.transpose(factors,0,1))

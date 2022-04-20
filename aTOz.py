@@ -1,14 +1,22 @@
-from load_data import load_data
+from load_data    import load_data
 from create_model import create_model
-from learn_that import learn_that
-from plot_losses import plot_losses, create_path
+from learn_that   import learn_that
+from plot_losses  import plot_losses, create_path
+from box_plot     import box_plot
+from copy         import deepcopy
+from data         import data as dta
 import sys
 import pandas as pd
-from box_plot import box_plot
-from copy import deepcopy
-from data import data as dta
 
-dataset = sys.argv[1].lower()
+dataset     = sys.argv[1].lower()
+task_type   = sys.argv[2]
+model_name  = sys.argv[3]
+epochs      = int(sys.argv[4])
+batch_size  = int(sys.argv[5])
+k           = int(sys.argv[6])
+target_name = "target"
+if len(sys.argv) > 7:
+    target_name = sys.argv[7]
 
 
 nrows = None
@@ -20,19 +28,7 @@ resDir  = "results/" + dta.folderName[dataset] + "/"
 target  = dta.targets[dataset]
 
 
-
-task_type  = sys.argv[2]
-model_name = sys.argv[3]
-epochs     = int(sys.argv[4])
-batch_size = int(sys.argv[5])
-k          = int(sys.argv[6])
-
-target_name = "target"
-if len(sys.argv) > 7:
-    target_name = sys.argv[7]
-
-X, y, old_x, X_all, y_std, target_values = \
-    load_data(path, task_type=task_type, target_name=target_name, nrows=nrows)
+X, y, old_x, X_all, y_std, target_values = load_data(path, task_type=task_type, target_name=target_name, nrows=nrows)
 
 if task_type == "multiclass":
     n_classes = len(target_values)
@@ -57,30 +53,30 @@ for _k in range(k):
                 model, optimizer, loss_fn = modelGSE, optimizerGSE, loss_fnGSE
 
             losses = learn_that(
-                        model,
-                        optimizer,
-                        loss_fn,
-                        X,
-                        y, 
-                        epochs,
-                        batch_size,
-                        gse,
-                        old_x,
-                        print_mode=False,
-                        _task_type=task_type,
-                        sparse=optim == "sparse_adam")
-            if gse:
-                results["gse-"+optim].append(losses["test"][-1])
-            else:
-                results["no_gse-"+optim].append(losses["test"][-1])
+                model,
+                optimizer,
+                loss_fn,
+                X,
+                y,
+                epochs,
+                batch_size,
+                gse,
+                old_x,
+                print_mode=False,
+                _task_type=task_type,
+                sparse=optim == "sparse_adam")
+            prefix = "gse-"
+            if not gse:
+                prefix = "no_" + prefix
+            results[prefix+optim].append(losses["test"][-1])
 
             if _k == 1:
-                plot_path = create_path(resDir, model_name + "withOptimoo"+optim, epochs, batch_size, gse)
+                plot_path = create_path(resDir, model_name + dta.png_prefix+optim, epochs, batch_size, gse)
                 title = dataset + "-gse:" + str(gse)
                 plot_losses(losses, title=title, path=plot_path)
                 df = pd.DataFrame(losses)
                 df.to_csv(plot_path + '.csv', index=False)
 if k > 1:
-    save_path = create_path(resDir, model_name+ "withOptimoo"+optim, epochs, batch_size, k)
+    save_path = create_path(resDir, model_name+ dta.png_prefix+optim, epochs, batch_size, k)
     print(results)
     box_plot(results, path=save_path)
