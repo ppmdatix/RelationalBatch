@@ -23,7 +23,7 @@ nrows = None
 optims = dta.optims
 
 dataDir = "data/" + dta.folderName[dataset] + "/"
-path    = dataDir + "training_processed.csv"
+path    = dataDir + dta.output_file
 resDir  = "results/" + dta.folderName[dataset] + "/"
 target  = dta.targets[dataset]
 
@@ -51,7 +51,7 @@ for _k in range(k):
                 loss_fnGSE   = deepcopy(loss_fn)
             else:
                 model, optimizer, loss_fn = modelGSE, optimizerGSE, loss_fnGSE
-
+            print("ready to learn")
             losses = learn_that(
                 model,
                 optimizer,
@@ -65,6 +65,7 @@ for _k in range(k):
                 print_mode=False,
                 _task_type=task_type,
                 sparse=optim == "sparse_adam")
+            print("learnt")
             prefix = "gse-"
             if not gse:
                 prefix = "no_" + prefix
