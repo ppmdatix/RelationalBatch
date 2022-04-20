@@ -40,6 +40,8 @@ else:
     n_classes = None
 
 results = {"gse-"+o: [] for o in optims}
+for o in optims:
+    results["no_gse-"+o] = []
 
 
 for _k in range(k):
