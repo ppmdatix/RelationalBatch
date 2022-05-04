@@ -80,14 +80,14 @@ def learn_that(_model, _optimizer, _loss_fn, _X, _y, _epochs, _batch_size, _gse,
     losses = {"val": [], "test": []}
     for epoch in range(1, _epochs + 1):
 
-        print("epoch " + str(epoch) + "\n")
+        # print("epoch " + str(epoch) + "\n")
         permutation = torch.randperm(_X['train'].size()[0])
 
         for iteration in range(0, _X['train'].size()[0], _batch_size):
 
             batch_idx = permutation[iteration:iteration + _batch_size]
 
-            print("iteration " + str(iteration) + "\n")
+            # print("iteration " + str(iteration) + "\n")
             _model.train()
             _optimizer.zero_grad()
             x_batch = _X['train'][batch_idx]
