@@ -72,13 +72,14 @@ def evaluate(part, model, X, y, y_std, task_type="regression"):
 
 
 def learn_that(_model, _optimizer, _loss_fn, _X, _y, _epochs, _batch_size, _gse, _old_x, print_mode=False, _task_type="regression", sparse=False):
-
     start = time.time()
+    modification = 0
+    count = 0
+    backTo = 0
     if print_mode:
         print(f'Test score before training: {evaluate("test", _model):.4f}')
 
     report_frequency = len(_X['train']) // _batch_size // 5
-
 
     size = _X['train'].size()[0]
     column_count = len(_old_x['train'].columns)
@@ -103,32 +104,39 @@ def learn_that(_model, _optimizer, _loss_fn, _X, _y, _epochs, _batch_size, _gse,
             loss = _loss_fn(apply_model(x_batch, model=_model).squeeze(1), y_batch)
             loss.backward()
 
+            _old_train_x_data = _old_x['train'][iteration * _batch_size:(iteration+1) * _batch_size]
 
             # Modify gradients
             if _gse:
+                s = time.time()
                 old_params = []
                 for name, param in _model.named_parameters():
                     if name == "blocks.0.linear.weight":
-                        factors = torch.ones(column_count,param.grad.shape[0])
+                        factors = torch.ones(column_count, param.grad.shape[0])
                         for i in range(column_count):
-                            idx = _old_x['train'][iteration * _batch_size:(iteration+1) * _batch_size].columns[i]
-                            real_count = _old_x['train'][iteration * _batch_size:(iteration+1) * _batch_size][idx].sum()
+                            idx = _old_train_x_data.columns[i]
+                            c = time.time()
+                            real_count = _old_train_x_data[idx].sum()
+                            count += time.time() - c
                             if real_count > 0:
                                 factors[i] = (_batch_size / (1.0 * real_count)) * factors[i]
                         param.grad = torch.mul(param.grad, torch.transpose(factors,0,1))
                         old_params.append(deepcopy(param))
-
+                modification += time.time() - s
             if sparse:
                 for p in _model.parameters():
                     p.grad = p.grad.to_sparse()
                     
             _optimizer.step()
             if _gse and not sparse:
+
+                s = time.time()
                 i = 0
                 for name, param in _model.named_parameters():
                     if name == "blocks.0.linear.weight":
                         param = torch.where(param.grad == 0, old_params[i], param)
                         i += 1
+                backTo += time.time() - s
             if print_mode:
                 if iteration % report_frequency == 0:
                     batch = "batch"
@@ -142,5 +150,9 @@ def learn_that(_model, _optimizer, _loss_fn, _X, _y, _epochs, _batch_size, _gse,
 
     end = time.time()
     delta = end - start
+
     print("ellapsed time (sec) : " + str(delta))
+    print("modification time (sec) : " + str(modification))
+    print("count time (sec) : " + str(count))
+    print("backTo time (sec) : " + str(backTo))
     return losses
