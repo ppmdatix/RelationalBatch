@@ -23,6 +23,7 @@ from lib.deep import IndexLoader
 import pandas as pd
 import rtdl
 from data import data as dta
+import time
 
 
 
@@ -72,22 +73,28 @@ def evaluate(part, model, X, y, y_std, task_type="regression"):
 
 def learn_that(_model, _optimizer, _loss_fn, _X, _y, _epochs, _batch_size, _gse, _old_x, print_mode=False, _task_type="regression", sparse=False):
 
+    start = time.time()
     if print_mode:
         print(f'Test score before training: {evaluate("test", _model):.4f}')
 
     report_frequency = len(_X['train']) // _batch_size // 5
 
+
+    size = _X['train'].size()[0]
+    column_count = len(_old_x['train'].columns)
     losses = {"val": [], "test": []}
     for epoch in range(1, _epochs + 1):
 
-        # print("epoch " + str(epoch) + "\n")
-        permutation = torch.randperm(_X['train'].size()[0])
+        print("epoch " + str(epoch) + " on " + str(_epochs) + " epochs \n")
+        permutation = torch.randperm(size)
 
-        for iteration in range(0, _X['train'].size()[0], _batch_size):
+        for iteration in range(0, size, _batch_size):
+
+            if iteration % 100 == 0:
+                print(str(iteration) + " on " + str(size) + " iterations" )
 
             batch_idx = permutation[iteration:iteration + _batch_size]
 
-            # print("iteration " + str(iteration) + "\n")
             _model.train()
             _optimizer.zero_grad()
             x_batch = _X['train'][batch_idx]
@@ -102,7 +109,6 @@ def learn_that(_model, _optimizer, _loss_fn, _X, _y, _epochs, _batch_size, _gse,
                 old_params = []
                 for name, param in _model.named_parameters():
                     if name == "blocks.0.linear.weight":
-                        column_count = len(_old_x['train'].columns)
                         factors = torch.ones(column_count,param.grad.shape[0])
                         for i in range(column_count):
                             idx = _old_x['train'][iteration * _batch_size:(iteration+1) * _batch_size].columns[i]
@@ -123,17 +129,18 @@ def learn_that(_model, _optimizer, _loss_fn, _X, _y, _epochs, _batch_size, _gse,
                     if name == "blocks.0.linear.weight":
                         param = torch.where(param.grad == 0, old_params[i], param)
                         i += 1
-            if iteration % report_frequency == 0:
-                batch = "batch"
-                if _gse:
-                    batch= "gse-batch"
-                if print_mode:
+            if print_mode:
+                if iteration % report_frequency == 0:
+                    batch = "batch"
+                    if _gse:
+                        batch= "gse-batch"
                     print(f'(epoch) {epoch} ({batch}) {iteration} (loss) {loss.item():.4f}')
 
         losses['val'].append(float(_loss_fn(apply_model(_X['val'],   model=_model).squeeze(1), _y['val'])))
         losses['test'].append(float(_loss_fn(apply_model(_X['test'], model=_model).squeeze(1), _y['test'])))
 
-        # val_score  = evaluate("val", _model, _X, _y, y_std, task_type=_task_type)
-        # test_score = evaluate("test", _model, _X, _y, y_std, task_type=_task_type)
 
+    end = time.time()
+    delta = end - start
+    print("ellapsed time (sec) : " + str(delta))
     return losses

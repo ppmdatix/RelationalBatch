@@ -19,7 +19,7 @@ if len(sys.argv) > 7:
     target_name = sys.argv[7]
 
 
-nrows = None
+nrows = dta.nrows
 optims = dta.optims
 
 dataDir = "data/" + dta.folderName[dataset] + "/"
@@ -39,9 +39,10 @@ results = {"gse-"+o: [] for o in optims}
 for o in optims:
     results["no_gse-"+o] = []
 
-
+print(dataDir)
+print(model_name)
 for _k in range(k):
-    print(str(k) + "\n")
+    print("reproduction" + str(k) + "\n")
     for optim in optims:
         for gse in [True, False]:
             if gse:
