@@ -91,8 +91,8 @@ def learn_that(_model, _optimizer, _loss_fn, _X, _y, _epochs, _batch_size, _gse,
 
         for iteration in range(0, size, _batch_size):
 
-            if iteration % 100 == 0:
-                print(str(iteration) + " on " + str(size) + " iterations" )
+            # if iteration % 100 == 0:
+                # print(str(iteration) + " on " + str(size) + " iterations" )
 
             batch_idx = permutation[iteration:iteration + _batch_size]
 
