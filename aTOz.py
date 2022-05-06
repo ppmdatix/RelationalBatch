@@ -8,12 +8,12 @@ from data         import data as dta
 import sys
 import pandas as pd
 
-dataset     = sys.argv[1].lower()
-task_type   = sys.argv[2]
-model_name  = sys.argv[3]
-epochs      = int(sys.argv[4])
-batch_size  = int(sys.argv[5])
-k           = int(sys.argv[6])
+dataset      = sys.argv[1].lower()
+task_type    = sys.argv[2]
+model_name   = sys.argv[3]
+epochs       = int(sys.argv[4])
+batch_size   = int(sys.argv[5])
+reproduction = int(sys.argv[6])
 target_name = "target"
 if len(sys.argv) > 7:
     target_name = sys.argv[7]
@@ -41,8 +41,8 @@ for o in optims:
 
 print(dataDir)
 print(model_name)
-for _k in range(k):
-    print("reproduction" + str(k) + "\n")
+for _k in range(reproduction):
+    print("reproduction" + str(reproduction) + "\n")
     for optim in optims:
         for gse in [True, False]:
             if gse:
@@ -72,13 +72,22 @@ for _k in range(k):
                 prefix = "no_" + prefix
             results[prefix+optim].append(losses["test"][-1])
 
-            if _k == 1:
-                plot_path = create_path(resDir, model_name + dta.png_prefix+optim, epochs, batch_size, gse)
-                title = dataset + "-gse:" + str(gse)
-                plot_losses(losses, title=title, path=plot_path)
-                df = pd.DataFrame(losses)
-                df.to_csv(plot_path + '.csv', index=False)
-if k > 1:
-    save_path = create_path(resDir, model_name+ dta.png_prefix+optim, epochs, batch_size, k)
+            # if _k == 1:
+            #     plot_path = create_path(resDir, model_name + dta.png_prefix+optim, epochs, batch_size, gse)
+            #     title = dataset + "-gse:" + str(gse)
+            #     plot_losses(losses, title=title, path=plot_path)
+            #     df = pd.DataFrame(losses)
+            #     df.to_csv(plot_path + '.csv', index=False)
+if reproduction > 1:
+    save_path = create_path(resDir, model_name+ dta.png_prefix+optim, epochs, batch_size, reproduction)
     print(results)
+    for optim in optims:
+        for gse in [True, False]:
+            plot_path = create_path(resDir, model_name + dta.png_prefix + optim, epochs, batch_size, gse)
+            prefix = "gse-"
+            if not gse:
+                prefix = "no_" + prefix
+            r = results[prefix+optim]
+            df = pd.DataFrame({"test": r})
+            df.to_csv(plot_path + '.csv', index=False)
     box_plot(results, path=save_path)
