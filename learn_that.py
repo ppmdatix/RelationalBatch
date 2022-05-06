@@ -23,7 +23,6 @@ from lib.deep import IndexLoader
 import pandas as pd
 import rtdl
 from data import data as dta
-import time
 
 
 
@@ -72,7 +71,6 @@ def evaluate(part, model, X, y, y_std, task_type="regression"):
 
 
 def learn_that(_model, _optimizer, _loss_fn, _X, _y, _epochs, _batch_size, _gse, _old_x, print_mode=False, _task_type="regression", sparse=False):
-    start = time.time()
     modification = 0
     count = 0
     backTo = 0
@@ -108,21 +106,17 @@ def learn_that(_model, _optimizer, _loss_fn, _X, _y, _epochs, _batch_size, _gse,
 
             # Modify gradients
             if _gse:
-                s = time.time()
                 old_params = []
                 for name, param in _model.named_parameters():
                     if name == "blocks.0.linear.weight":
                         factors = torch.ones(column_count, param.grad.shape[0])
                         for i in range(column_count):
                             idx = _old_train_x_data.columns[i]
-                            c = time.time()
                             real_count = _old_train_x_data[idx].sum()
-                            count += time.time() - c
                             if real_count > 0:
                                 factors[i] = (_batch_size / (1.0 * real_count)) * factors[i]
                         param.grad = torch.mul(param.grad, torch.transpose(factors,0,1))
                         old_params.append(deepcopy(param))
-                modification += time.time() - s
             if sparse:
                 for p in _model.parameters():
                     p.grad = p.grad.to_sparse()
@@ -130,13 +124,11 @@ def learn_that(_model, _optimizer, _loss_fn, _X, _y, _epochs, _batch_size, _gse,
             _optimizer.step()
             if _gse and not sparse:
 
-                s = time.time()
                 i = 0
                 for name, param in _model.named_parameters():
                     if name == "blocks.0.linear.weight":
                         param = torch.where(param.grad == 0, old_params[i], param)
                         i += 1
-                backTo += time.time() - s
             if print_mode:
                 if iteration % report_frequency == 0:
                     batch = "batch"
@@ -147,12 +139,4 @@ def learn_that(_model, _optimizer, _loss_fn, _X, _y, _epochs, _batch_size, _gse,
         losses['val'].append(float(_loss_fn(apply_model(_X['val'],   model=_model).squeeze(1), _y['val'])))
         losses['test'].append(float(_loss_fn(apply_model(_X['test'], model=_model).squeeze(1), _y['test'])))
 
-
-    end = time.time()
-    delta = end - start
-
-    print("ellapsed time (sec) : " + str(delta))
-    print("modification time (sec) : " + str(modification))
-    print("count time (sec) : " + str(count))
-    print("backTo time (sec) : " + str(backTo))
     return losses
