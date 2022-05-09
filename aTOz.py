@@ -24,7 +24,7 @@ optims = dta.optims
 
 dataDir = "data/" + dta.folderName[dataset] + "/"
 path    = dataDir + dta.output_file
-resDir  = "results/" + dta.folderName[dataset] + "/"
+resDir  = "results/" + dta.folderName[dataset]
 target  = dta.targets[dataset]
 
 
@@ -79,7 +79,7 @@ for _k in range(reproduction):
             #     df = pd.DataFrame(losses)
             #     df.to_csv(plot_path + '.csv', index=False)
 if reproduction > 1:
-    save_path = create_path(resDir, model_name+ dta.png_prefix+optim, epochs, batch_size, reproduction)
+    # save_path = create_path(resDir, model_name+ dta.png_prefix+optim, epochs, batch_size, reproduction)
     print(results)
     for optim in optims:
         for gse in [True, False]:
@@ -90,4 +90,4 @@ if reproduction > 1:
             r = results[prefix+optim]
             df = pd.DataFrame({"test": r})
             df.to_csv(plot_path + '.csv', index=False)
-    box_plot(results, path=save_path)
+    # box_plot(results, path=save_path)
