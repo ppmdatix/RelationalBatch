@@ -52,7 +52,7 @@ targets = {
 
 models = ["mlp", "resnet"]
 optims = ["SGD", "adam", "adagrad" ]
-batch_sizes = [32, 128, 256]
+batch_sizes = [64,512, 1024]
 epochs = 10
 reproduction = 10
 png_prefix = "withOptimoo"
