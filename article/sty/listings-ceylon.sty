@@ -1,0 +1,188 @@
+%%
+%% This is file `listings-ceylon.sty',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% listings-ceylon.dtx  (with options: `package')
+%% 
+%% This is a generated file.
+%% 
+%% Copyright (C) 2018 by Lucas Werkmeister
+%% 
+%% This file may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either
+%% version 1.3 of this license or (at your option) any later
+%% version.  The latest version of this license is in:
+%% 
+%%    http://www.latex-project.org/lppl.txt
+%% 
+%% and version 1.3 or later is part of all distributions of
+%% LaTeX version 2005/12/01 or later.
+%% 
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{listings-ceylon}
+   [2018/04/09 v0.1 Ceylon language support for listings]
+\RequirePackage{listings}
+\lstdefinelanguage{ceylon}{
+  morekeywords={
+    assembly, module, package, import,
+    alias, class, interface, object,
+    given, value, assign, void, function, new,
+    of, extends, satisfies, abstracts,
+    in, out,
+    return, break, continue, throw,
+    assert, dynamic,
+    if, else, switch, case, for, while, try, catch, finally, then, let,
+    this, outer, super,
+    is, exists, nonempty,
+  },
+  morekeywords=[2]{
+    shared, abstract, formal, default, actual,
+    variable, late, native, deprecated, final, sealed,
+    annotation, suppressWarnings, small, static,
+  },
+  morekeywords=[3]{
+    doc, by, license, see, throws, since, aliased, tagged,
+  },
+  sensitive=true,
+  morecomment=[l]{//},
+  morecomment=[n]{/*}{*/},
+  morestring=[b]",
+  morestring=[b]',
+}
+\@ifpackageloaded{xcolor}{
+  \definecolor{ceylon.ide.color.keywords}{RGB}{76,76,76}
+  \definecolor{ceylon.ide.color.annotations}{RGB}{51,153,204}
+  \definecolor{ceylon.ide.color.identifiers}{RGB}{0,51,153}
+  \definecolor{ceylon.ide.color.types}{RGB}{153,0,102}
+  \colorlet{ceylon.ide.color.numbers}{blue}
+  \colorlet{ceylon.ide.color.strings}{blue}
+  \colorlet{ceylon.ide.color.comments}{darkgray}
+  \newcommand*\ceylonIdeEclipseIdentifier{%
+    \expandafter\ceylonIdeEclipseIdentifier@style\the\lst@token\relax%
+  }
+  \def\ceylonIdeEclipseIdentifier@style#1#2\relax{%
+    \ifcat#1%
+    \relax%
+    \else%
+    \ifnum`#1=\uccode`#1%
+    \color{ceylon.ide.color.types}%
+    \else%
+    \color{ceylon.ide.color.identifiers}%
+    \fi%
+    \fi%
+  }
+  \lstdefinestyle{ceylon.ide}{
+    basicstyle=\ttfamily,
+    keywordstyle=\bfseries\color{ceylon.ide.color.keywords},
+    keywordstyle=[2]\color{ceylon.ide.color.annotations},
+    keywordstyle=[3]\color{ceylon.ide.color.annotations},
+    identifierstyle=\ceylonIdeEclipseIdentifier,
+    numberstyle=\color{ceylon.ide.color.numbers},
+    stringstyle=\color{ceylon.ide.color.strings},
+    commentstyle=\color{ceylon.ide.color.comments},
+  }
+  \definecolor{ceylon.rainbow.comment}{HTML}{008b8b}
+  \colorlet{ceylon.rainbow.constant.numeric}{blue}
+  \colorlet{ceylon.rainbow.constant.string}{blue}
+  \definecolor{ceylon.rainbow.entity.function}{RGB}{51,153,204}
+  \definecolor{ceylon.rainbow.entity.class}{RGB}{153,0,102}
+  \definecolor{ceylon.rainbow.variable.global}{RGB}{0,51,153}
+  \definecolor{ceylon.rainbow.keyword}{RGB}{76,76,76}
+  \newcommand*\ceylonRainbowIdentifier{%
+    \expandafter\ceylonRainbowIdentifier@style\the\lst@token\relax%
+  }
+  \def\ceylonRainbowIdentifier@style#1#2\relax{%
+    \ifcat#1%
+    \relax%
+    \else%
+    \ifnum`#1=\uccode`#1%
+    \color{ceylon.rainbow.entity.class}%
+    \else%
+    \color{ceylon.rainbow.variable.global}%
+    \fi%
+    \fi%
+  }
+  \lstdefinestyle{ceylon.rainbow}{
+    basicstyle=\ttfamily,
+    keywordstyle=\bfseries\color{ceylon.rainbow.keyword},
+    keywordstyle=[2]\color{ceylon.rainbow.entity.function},
+    keywordstyle=[3]\color{ceylon.rainbow.entity.function},
+    identifierstyle=\ceylonRainbowIdentifier,
+    numberstyle=\color{ceylon.rainbow.constant.numeric},
+    stringstyle=\color{ceylon.rainbow.constant.string},
+    commentstyle=\color{ceylon.rainbow.comment},
+  }
+  \definecolor{ceylon.paraiso.background}{HTML}{2f1e2e}
+  \definecolor{ceylon.paraiso.foreground}{HTML}{e7e9db}
+  \definecolor{ceylon.paraiso.comment}{HTML}{776e71}
+  \definecolor{ceylon.paraiso.constant.numeric}{HTML}{f99b15}
+  \definecolor{ceylon.paraiso.constant.string}{HTML}{48b685}
+  \definecolor{ceylon.paraiso.entity.function}{HTML}{06b6ef}
+  \definecolor{ceylon.paraiso.entity.class}{HTML}{fec418}
+  \definecolor{ceylon.paraiso.variable.global}{HTML}{ef6155}
+  \definecolor{ceylon.paraiso.keyword}{HTML}{b8baaf}
+  \newcommand*\ceylonParaisoIdentifier{%
+    \expandafter\ceylonParaisoIdentifier@style\the\lst@token\relax%
+  }
+  \def\ceylonParaisoIdentifier@style#1#2\relax{%
+    \ifcat#1%
+    \relax%
+    \else%
+    \ifnum`#1=\uccode`#1%
+    \color{ceylon.paraiso.entity.class}%
+    \else%
+    \color{ceylon.paraiso.variable.global}%
+    \fi%
+    \fi%
+  }
+  \lstdefinestyle{ceylon.paraiso}{
+    basicstyle=\ttfamily\color{ceylon.paraiso.foreground},
+    backgroundcolor=\color{ceylon.paraiso.background},
+    keywordstyle=\color{ceylon.paraiso.keyword},
+    keywordstyle=[2]\color{ceylon.paraiso.entity.function},
+    keywordstyle=[3]\color{ceylon.paraiso.entity.function},
+    identifierstyle=\ceylonParaisoIdentifier,
+    numberstyle=\color{ceylon.paraiso.constant.numeric},
+    stringstyle=\color{ceylon.paraiso.constant.string},
+    commentstyle=\color{ceylon.paraiso.comment},
+  }
+}{
+  \lstdefinestyle{ceylon.ide}{
+    basicstyle=\ttfamily,
+    keywordstyle=\bfseries,
+  }
+  \lstdefinestyle{ceylon.rainbow}{
+    basicstyle=\ttfamily,
+    keywordstyle=\bfseries,
+  }
+  \lstdefinestyle{ceylon.paraiso}{
+    basicstyle=\ttfamily,
+  }
+}
+\DeclareOption{ide}{
+  \lstset{language=ceylon}
+  \lstset{style=ceylon.ide}
+}
+\newif\ifceylon@patchLstinline
+\DeclareOption{website}{
+  \lstset{language=ceylon}
+  \lstset{style=ceylon.paraiso}
+  \@ifpackageloaded{xcolor}{
+    \ceylon@patchLstinlinetrue
+  }{}
+}
+\ExecuteOptions{}
+\ProcessOptions\relax
+\ifceylon@patchLstinline
+  \RequirePackage{xpatch}
+  \RequirePackage{realboxes}
+  \xpretocmd\lstinline{%
+    \Colorbox{ceylon.paraiso.background}%
+    \bgroup\appto\lst@DeInit{\egroup}%
+  }{}{}
+\fi
+\endinput
+%%
+%% End of file `listings-ceylon.sty'.

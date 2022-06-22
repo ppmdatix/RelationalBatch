@@ -1,0 +1,128 @@
+% \section{Results and Discussion}\label{Results}
+
+% \begin{itemize}
+%     \item Maxime \ok ? \no ?
+%     \item Thierry \ok ? \no ?
+%     \item Victor \ok ? \no ?
+% \end{itemize}
+
+% \subsection{Results on \catmod}
+% \vline
+
+% To implement our idea on a simple linear regression we worked on the Chicago taxi rides dataset that can be found here \footnote{\url{https://data.cityofchicago.org/Transportation/Taxi-Trips/wrvz-psew}}.
+
+% For each ride, we use the taxi identifier, distance, payment type and the tips amount. 
+% We use modified version of linear regression to predict the tip based on the trip distance and the payment type.
+% \begin{equation*}\label{eq:naiveModel}
+%     tips = a \times distance + b 
+% \end{equation*}
+% We used a symbolic version of this model where the slope depends on the taxi and the payment method, the intercept remains shared among all the trips:
+% \begin{equation*}\label{eq:otherModel}
+%     tips = (\gamma_{\text{taxi}} \times \mu_{\text{payment}}) \times distance + b 
+% \end{equation*}
+% There is one $\gamma$ per taxi and one $\mu$ per payment method, this is a \catmod. As the intercept is shared among all taxis, the dataset is unsplitable. A model $$tips = \gamma_{\text{taxi}}  \times distance + b_{taxi} $$ could be split in different dataset (one per taxi) and thus we would be in the classical setting of a linear regression.
+
+% The relational batch performed better with our proposition based on Algorithm \ref{alg:DivideByTheGood} with the following setting: 30 epochs ; optimizer Adam with default setting ; batch size of 1. Experiment was reproduced 20 times. The used metric is the mean square error (MSE).
+
+% We ran the same experiments on the Belarus used cars dataset.    It is presented presented by \cite{UsedCars} and contains vehicle features. We take into account the car manufacturer, the production year, the origin region of the car to predict the selling price of the car.
+% \begin{equation*}\label{eq:otherModelUsedCars}
+%     price = (\gamma_{\text{manufacturer}} \times \mu_{\text{region}}) \times year + b 
+% \end{equation*}
+
+
+% \begin{table}[hb!]% h asks to places the floating element [h]ere.
+%   \caption{Results with \catmod }
+%   \label{tab:envisionResult}
+%   \begin{footnotesize}
+%   \begin{center}
+%   \begin{tabular}{l|cc}
+%     \toprule
+%     Dataset      & Adam         & Adam \& \tecnameAbrv       \\
+%     \midrule                                                                                     
+%     Chicago Ride & 35.58 $\pm$ 1.11 & \bold{9.45 $\pm$ 16.33} \\
+%     Used Cars & 7.10 $\pm$ 2.45 & \textbf{0.08 $\pm$ 0.01} \\
+%   \bottomrule
+% \end{tabular}
+% \end{center}
+% \end{footnotesize}
+% \end{table}
+
+
+% \subsection{Results on \catmod on a real case}
+
+
+% \TODO validate it with Joannes/Victor
+
+% We have successfully deployed to production such \catmod at Lokad in order to weekly forecast sales of a large retail company. The forecast is done at the item level. The dataset contains 3 years of history and concerns more than $13$ millions different items.
+
+% The implemented \catmod is similar\footnote{we do not disclose the actual model for confidentiality reasons} to:
+
+% %%\begin{equation*}
+% \begin{align*}
+%     \hat{y}(item, week) = \quad &\theta_{store(item)} \times \theta_{color(item)} \times \theta_{size(item)} \times\\
+%       & \Theta [group(item), WeekNumber(week)]
+% \end{align*}
+% %%\end{equation*}
+
+% $\Theta [group(item), WeekNumber(week)]$ is a parameter vector that can be seen as a function:
+% \begin{equation*}
+%     \Theta : Groups \times [| 1, 52|] \longrightarrow \mathbb{R}
+% \end{equation*}
+
+% It aims to capture the annual seasonality for a given group of items.
+
+
+% We use Adam with \tecname and a minibatch of $1$ to update the parameters. It outstandingly outperform the classical gradient estimator on this (very) \catmod. 
+
+% \subsection{\ohe Deep Learning}
+
+% To implement our idea on neural networks we worked on 5 different symbolic datasets. 
+
+% \begin{itemize}
+%     \item the Adult Census Income (ACI) dataset presented in \cite{incomeDataset} that aims to predict wealth category of individuals.
+%     \item the Compas dataset contains symbolic information on criminal defendant’s likelihood of re-offending.
+    
+%     \item the Don't Get Kicked (DGK) dataset introduced by \cite{DGK}. The objective is to predict if the car purchased at the Auction is a good or a bad buy.
+    
+%     \item the Forest Cover dataset presented \cite{ForestCover} contains symbolic characteristics on $30m^2$ forest cells. The objective is to predict the forest cover type. 
+%     \item the KDD99 dataset accessible by \cite{KDD99} contains symbolic features such as \textit{protocol_type}, \textit{service} and \textit{flag}.
+%     \item a Used Cars datasets from Belarus presented above.
+% \end{itemize}
+
+
+
+% In order to only measure the impact of the \tecname, we \textit{only} use those symbolic variables in our experiments. Those datasets tasks are quiet easy. As a consequence we use a very small network to highlight our approach. Our network is made of 3 dense layers of sizes $[4,8,4]$ with a batch of size $128$. We also perform experiments on a ResNet-like network that give same results. We use the $l_2$ loss. 
+% We have tested three different optimizer with their default settings: SGD (vanilla), Adagrad and Adam.
+
+% Results are reproducible in the repository.
+
+
+% \begin{remark}
+% We use the same ResNet-like network than \cite{RevisitingDeepForTabular}.
+% \end{remark}
+
+
+
+
+
+
+
+% \subsection{Results interpretation}
+% The results are recorded in Tables \ref{tab:resultsMLP1} \ref{tab:resultsMLP8} \ref{tab:resultsMLP32} \ref{tab:resultsMLP128}  \ref{tab:resultsRESNET1} \ref{tab:resultsRESNET8} \ref{tab:resultsRESNET32} \ref{tab:resultsRESNET128}  in appendices. On the different datasets we have worked on, we always see an improvement of the loss on the testing dataset using the \tecname. This proves the need to specifically handle stochastic gradient on symbolic data. Results in different settings demonstrate the advantage to use \tecname whatever the optimizer. Among other things, AdaGrad tries to handle gradient on sparse data (which includes one-hot encoded data) but we see a clear improvement on that task.
+
+
+% On top that, we clearly see that \tecname leads to greater variance in our results. Our intuition on it is that we estimate the gradient with less observation as written on line 17 ( $\rhd$ \textcolor{blue}{scaled gradient} ) of Algorithm \ref{alg:DivideByTheGood}.
+
+
+% \subsection{Similarity with embeddings A METTRE AVANT}
+% Our proposed solution, i.e. \tecname on one-hot-encoded data, is very similar to vector embedding. The main difference here is the cardinality of the symbolic features concerned. 
+
+% \subsection{Discussion and future work A FUSIONNER AVEC CONCLUSION} 
+
+
+
+% The main significance of this work is to highlight the lack of special treatment for symbolic data. They are unfairly underrepresented on public datasets and machine learning in general. We hope that this work will make researchers to take them more into considerations. And our proposed method combined with \ohe, turns every gradient-compatible model into a \catmod! We've shown it even on neural networks. This thus unlocks correct treatment of symbolic data for all gradient-based models. Moreover our gradient estimator clearly helps convergence when dealing with one-hot encoded data. Indeed this estimator add prior knowledge we have on the data to the gradient, thus the gradient conveys all relevant information, which is the expected behavior.
+
+
+
+% In the notation Section \ref{notations} we have defined symbol groups by Equation \ref{eq:symbol}. This ``reverse engineer`` \ohe and there might be a better paradigm in order to tackle symbolic dataset via \catmod; this will be the natural following work of this one.

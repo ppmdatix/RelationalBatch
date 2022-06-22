@@ -1,0 +1,3 @@
+for name, param in model.named_parameters():
+    if param.requires_grad:
+        param.grad = factors["nan"] * param.grad

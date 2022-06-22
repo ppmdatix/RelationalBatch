@@ -1,0 +1,70 @@
+\section{Estimator}
+
+
+
+Let $Z$ be a non-empty finite set and $T \subset Z$ also non empty.
+
+We have a score function $s$ on $T$:
+
+\begin{equation*}
+\begin{split}
+    s \quad : \quad &T \longrightarrow \mathbb{R}\\
+    &t                 \longrightarrow s(t)
+\end{split}
+\end{equation*}
+
+
+
+We aim to estimate 
+\begin{equation*}
+    s_T = \frac{1}{\abs{T}} \sum_{x \in T} s(x)
+\end{equation*}
+
+Let $(M_k)_{k \leq K}$ a serie of $K$ draws uniform with replacement of $m$ elements of $Z$.
+
+\begin{remark}\label{rem:K>1}
+    Thanks to Theorem \ref{theorem:stop} we can ignore the first draws $M_{0}$ such as $M_{0} \cap T = \emptyset$
+\end{remark}
+
+One notes
+
+
+\begin{align*}
+    M_k &= (M_k \cap T ) \sqcup (M_k \cap (Z \backslash T)) \\
+        &= (M_k^T ) \sqcup (M_k \cap (Z \backslash T))
+\end{align*}
+
+\[
+   avg(M_k^T) = 
+\begin{cases}
+     \quad 0 \quad \text{if} \quad M_k^T  = \emptyset\\
+    \frac{1}{\abs{M_k^T}} \sum_{x \in M_k^T}s(x) \quad \text{otherwise}
+\end{cases}
+\]
+and
+
+\begin{equation*}
+    \bar{K} = \abs{ \{ k \leq K | M_k^T \neq \emptyset \}}
+\end{equation*}
+
+Thanks to Remark \ref{rem:K>1} we have $\bar{K} \geq 1$. Then the proposed estimator is $\hat{a}$:
+
+\begin{equation*}
+    \hat{a} = \frac{1}{\bar{K}} \sum_{k = 1}^{K}avg(M_k^T)
+\end{equation*}
+
+
+
+\begin{theorem}[Unbiased estimator]\label{theorem:unbiased}
+$\hat{a}$ is an unbiased estimator of $s_T$
+\end{theorem}
+
+
+
+\begin{proof}
+\begin{align*}
+    \esp{\Tilde{a}} &= \frac{1}{\hat{K}} \sum_{\underset{k = 1}{M_k^T \neq \emptyset}}^{K} \frac{1}{\abs{(M_k^T)}} \sum_{x \in M_k^T} \esp{s(x)}\\
+    &= \frac{\bar{K}}{\bar{K}} \frac{\abs{M_k^T}}{\abs{M_k^T}} \esp{s_T}\\
+    &= s_T
+\end{align*}
+\end{proof}

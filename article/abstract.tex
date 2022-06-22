@@ -1,0 +1,30 @@
+\begin{abstract}
+%% Context
+% Encoding symbolic data to feed gradient-based models is a widely used technique in Machine Learning. Indeed many models such as neural networks only supports numerical value as input. In those models, gradient is estimated to be then used by an optimizer to update models' parameters.
+% %% Problem
+% But treating encoded data as regular numerical data raises issue with stochastic gradient descent.
+% %% Solution
+% In this paper we propose different solutions in order to properly handle gradient descent on encoded data. After a survey on symbolic data in public datasets, a novel gradient estimator is introduced and evaluated on 6 different datasets with multiple model architectures. 
+% %% Results
+% This new estimator performs better than common estimators under similar settings.
+% %% Reason to be
+% Overall, the aim of this paper is to convince researchers to highly consider symbolic data and adapt their models, optimizers, benchmarks \dots to these key features.
+
+\\
+
+\\
+
+\\
+
+
+Symbolic data are present in key areas such as health or supply chain, and this data require specific treatment. In order to apply recent machine learning models on such data, encoding is needed. In order to build interpretable models, \ohe is a very good solution. But such encoding creates sparse data. Gradient estimators are not suited for sparse data: the gradient is mainly considered as zero while it simply does not always exists. After a survey on symbolic data in public datasets, a novel gradient estimator is introduced. We show what this estimator minimizes in theory and show its efficiency on 6 different datasets with multiple model architectures. 
+
+%% Results
+This new estimator performs better than common estimators under similar settings.
+%% Reason to be
+Overall, the aim of this paper is to convince researchers to thoroughly consider symbolic data and adapt their models, optimizers, benchmarks \dots to these key features.
+
+
+\end{abstract}
+
+

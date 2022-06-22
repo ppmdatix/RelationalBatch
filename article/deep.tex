@@ -1,0 +1,145 @@
+\section{Deep Learning}\label{deepLearning}
+
+% \begin{itemize}
+%     \item Maxime \ok ? \no ?
+%     \item Thierry \ok ? \no ?
+%     \item Victor \ok ? \no ?
+% \end{itemize}
+
+
+
+Most deep architectures are built to support numerical data such as image or audio but \ohe approach has already been applied by \cite{RevisitingDeepForTabular} for example and is called \textit{Feature Tokenizer}. Applying \textbf{one-hot-encoding} to feed neural networks is theoretically equivalent to use a different network for each symbol. We illustrate that on a dense linear layer as depicted in Figures \ref{fig:catModelOneHot}. This use of different networks for each symbols raises the issue depicted in \ref{sec:motication} when used with \textit{batch} during training. Gradient estimation done by \textit{batch} implies that the parameters are used on every observation, which totally makes sense for classical Deep Learning (i.e. with no one-hot encoded data). If a symbol is not present in a \textit{batch}, it means that there is no accumulated gradient, which is different than accumulated gradient is zero.
+
+
+
+\begin{figure*}
+\centering
+\begin{subfigure}{0.48\linewidth}
+\centering
+\begin{tikzpicture}[scale=0.8]
+\begin{scope}[every node/.style={square,thick,draw,minimum size=0.8pt}]
+\begin{footnotesize}
+    \node (num1) at (0,8)  {};
+    \node (num1bis) at (2,8)  {};
+    \node (num2) at (0,5.5)   {};
+    \node (num3) at (0,4)   {};
+    \node (hidden1) [color=red] at (4,5)     {};
+    \node (hidden2) [color=red] at (4,7)     {};
+\end{footnotesize}
+\end{scope}
+\begin{scope}[every node/.style={square,thick,draw,minimum size=2.05cm}]
+\begin{small}
+    \node (container) [color=blue] at (1,8) {};
+\end{small}
+\end{scope}
+\begin{scope}[>={Stealth[black]},
+              every node/.style={fill=white,circle},
+              every edge/.style={thin, color=black}]
+    \path [->] (num1) edge[draw=black, dashed] (num1bis);
+    \path [->] (num1bis) edge[draw=black] (hidden1);
+    \path [->] (num1bis) edge[draw=black] (hidden2);
+    \path [->] (num2) edge[draw=black, dashed] (hidden1);
+    \path [->] (num2) edge[draw=black, dashed] (hidden2);
+    \path [->] (num3) edge[draw=black, dashed] (hidden1);
+    \path [->] (num3) edge[draw=black, dashed] (hidden2);
+\end{scope}
+\end{tikzpicture}
+\caption{Dense Layer}
+\label{fig:catModelOneHotPART1}
+\end{subfigure}
+\begin{subfigure}{0.48\linewidth}
+\centering
+\begin{tikzpicture}[scale=0.6]
+\begin{scope}[every node/.style={square,thick,draw,minimum size=1.2pt}]
+%%    \node (in) at (-1.2,6)  {};
+    \node (hidden2) at (4,5) {};
+    \node (hidden1) at (4,7) {};
+\end{scope}
+
+\begin{scope}[every node/.style={square,thick,draw,minimum size=25pt,fill=gray,opacity=.2,text opacity=1}]
+\begin{footnotesize}
+    \node (A) at (0,8)  {$is_{blue}$};
+    \node (B) at (0,6)  {$is_{pink}$};
+    \node (C) at (0,4)  {$is_{green}$};
+\end{footnotesize}
+\end{scope}
+
+\begin{scope}[every node/.style={square,thick,draw,minimum size=4cm}]
+    \node (container) [color=blue] at (1.7,6) {};
+\end{scope}
+\begin{scope}[every node/.style={square,thick,draw,minimum size=1.2pt}]
+    \node (out1) [color=red] at (7,6) {};
+    \node (out2) [color=red] at (7,2) {};
+\end{scope}
+
+\begin{scope}[>={Stealth[black]},
+              every node/.style={fill=white,circle},
+              %%every edge/.style={very thick, color=black}]
+              every edge/.style={thin, color=black}]
+    \path [->] (A) edge[draw=black, dashed] (hidden1);
+    \path [->] (A) edge[draw=black, dashed] (hidden2);
+    \path [->] (B) edge[draw=black, dashed] (hidden1);
+    \path [->] (B) edge[draw=black, dashed] (hidden2);
+    \path [->] (C) edge[draw=black, dashed] (hidden1);
+    \path [->] (C) edge[draw=black, dashed] (hidden2);
+    \path [->] (hidden1) edge[draw=black] (out1);
+    \path [->] (hidden2) edge[draw=black] (out2);
+
+\end{scope}
+\end{tikzpicture}
+\caption{\ohe of a dense layer}
+\label{fig:catModelOneHotPART2}
+\end{subfigure}
+\begin{subfigure}{0.5\linewidth}
+\centering
+\begin{tikzpicture}[scale=0.6]
+\begin{scope}[every node/.style={square,thick,draw,minimum size=1.2pt}]
+%%    \node (in) at (-1.2,6)  {};
+    \node (hidden2) at (4,5) {};
+    \node (hidden1) at (4,7) {};
+\end{scope}
+
+\begin{scope}[every node/.style={square,thick,draw,minimum size=25pt,fill=gray,opacity=.2,text opacity=1}]
+\begin{footnotesize}
+    \node (A) at (0,8)  {$is_{blue}$};
+    \node (B) at (0,6)  {$is_{pink}$};
+    \node (C) at (0,4)  {$is_{green}$};
+\end{footnotesize}
+\end{scope}
+
+\begin{scope}[every node/.style={square,thick,draw,minimum size=4cm}]
+    \node (container) [color=blue] at (1.7,6) {};
+\end{scope}
+\begin{scope}[every node/.style={square,thick,draw,minimum size=1.2pt}]
+    \node (out1) [color=red] at (7,6) {};
+    \node (out2) [color=red] at (7,2) {};
+\end{scope}
+
+\begin{scope}[>={Stealth[black]},
+              every node/.style={fill=white,circle},
+              %%every edge/.style={very thick, color=black}]
+              every edge/.style={thin, color=black}]
+    \path [->] (A) edge[draw=black, dashed] (hidden1);
+    \path [->] (A) edge[draw=black, dashed] (hidden2);
+    \path [->] (B) edge[draw=black, dashed] (hidden1);
+    \path [->] (B) edge[draw=black, dashed] (hidden2);
+    \path [->] (C) edge[draw=red, dashed] (hidden1);
+    \path [->] (C) edge[draw=red, dashed] (hidden2);
+    \path [->] (hidden1) edge[draw=red] (out1);
+    \path [->] (hidden2) edge[draw=red] (out2);
+
+\end{scope}
+\end{tikzpicture}
+\caption{dense layer relative to she \textit{green} symbol}
+\label{fig:catModelOneHotPART2}
+\end{subfigure}
+
+\caption{\ohe for neural networks}
+\label{fig:catModelOneHot}
+\end{figure*}
+
+
+
+
+
+

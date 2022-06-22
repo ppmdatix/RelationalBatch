@@ -1,0 +1,264 @@
+\section{Symbolic models and feature encoding}\label{sec:encoding}
+
+% \begin{itemize}
+%     \item Maxime \ok ? \no ?
+%     \item Thierry \ok ? \no ?
+%     \item Victor \ok ? \no ?
+% \end{itemize}
+
+%Model optimization through gradient descent is done on a daily basis in Machine Learning where input data can be numerical or symbolic. In this work we focus on symbolic data and adapted models.
+\begin{table}[h!]% h asks to places the floating element [h]ere.
+  \caption{symbolic data}
+  \label{tab:catData}
+  \begin{footnotesize}
+  \begin{center}
+  \begin{tabular}{llc}
+    \toprule
+    Color & Store & Sales \\
+    \midrule
+    blue  & Paris    & 14 \\
+    pink  & Rome     & 12 \\
+    pink  & Rome     & 13 \\
+    \dots & \dots    & \dots \\
+    blue  & Berlin     & 17 \\
+    pink  & Paris     & 8  \\
+  \bottomrule
+\end{tabular}
+\end{center}
+\end{footnotesize}
+\end{table}
+
+Let us denote ``\catmod`` the set of models that accept symbolic features by design and are numerical , i.e. their parameters can be updated through gradient descent.
+By symbolic features, we denote a feature $s$ belonging to an alphabet of $n_{s}$ symbols $\left\{s_1,\cdots, s_{n_{s}} \right\}$, whose cardinality depends on the data. In Table \ref{tab:catData}, color and stores are symbolic features, and pink and blue are symbols, and forms the color alphabet.
+
+For example logistic regression introduced by \cite{cox1958regression} belongs to this set of models. 
+Wide models described in \cite{wideAndDeep} also correspond to this.
+However, Decision Trees do not as they cannot be considered numerical models, but rather ensemble models. Regular neural networks are not \catmod either because they cannot use raw symbolic input data and need to be encoded.
+
+
+A straightforward \catmod for inputs taken from Table \ref{tab:catData} could be \ref{catModel} and is represented through the graphical representation depicted in Figure  \ref{fig:featTokenizerOWN}
+
+\begin{equation}\label{fig:catModel}
+    \hat{y} = \mu_{color} \times \gamma_{store}
+\end{equation}
+
+
+\begin{figure*}[h!]
+\centering
+\begin{tikzpicture}[scale=1]
+\begin{scope}[every node/.style={square,thick,draw,minimum size=1cm,fill=green!50,opacity=.2,text opacity=1}]
+    \node (Color) at (1,0)  {\tikz\draw[magenta,fill=magenta] (0,0) circle (.9ex);};
+\end{scope}
+
+\begin{scope}[every node/.style={square,thick,draw,minimum size=1cm,fill=yellow!50,opacity=.2,text opacity=1}]
+    \node (Store) at (5,0) {\small Rome};
+\end{scope}
+
+\begin{scope}
+    \node (mucolor)  at (1.0,2.8) {$\mu_{color}$};
+    \node (gammastore) at (5,2.8)  {$\gamma_{store}$};
+\end{scope}
+
+\begin{scope}
+    \node (dataColor)  at (1.0,-1) {color};
+    \node (data)  at (-2.9,0)    [anchor=west]  {\small data};
+    \node (param)  at (-2.9,2)  [anchor=west]    {\small parameters};
+    \node (pred)  at (-2.9,4)   [anchor=west]   {\small prediction};
+    \node (dataStore)  at (5,-1)    {store};
+\end{scope}
+
+
+\begin{scope}[every node/.style={square,thick,draw,minimum size=1cm,fill=green!50,opacity=.8,text opacity=1}]
+    \node (pink) at (1.55,2) %%{\textcolor{magenta}{\mu_{pink}}};
+    {\textcolor{magenta}{$\mu_{pink}$}};
+    %%{\tikz\draw[magenta,fill=magenta] (0,0) circle (.9ex);};
+\end{scope}
+
+\begin{scope}[every node/.style={square,thick,draw,minimum size=1cm,fill=green!50,opacity=.2,text opacity=1}]
+    \node (blue) at (0.45,2) 
+    {\textcolor{blue}{$\mu_{blue}$}};
+    %%{\tikz\draw[blue,fill=blue] (0,0) circle (.9ex);};
+\end{scope}
+
+\begin{scope}[every node/.style={square,thick,draw,minimum size=1cm,fill=yellow!50,opacity=.8,text opacity=1}]
+    \node (M) at (5,2) {\small \textbf{$\gamma_{Rome}$}};
+\end{scope}
+
+\begin{scope}[every node/.style={square,thick,draw,minimum size=1cm,fill=yellow!50,opacity=.2,text opacity=1}]
+    \node (S) at (3.75,2) {\small $\gamma_{Paris}$ };
+    \node (L) at (6.3,2) {\small $\gamma_{Berlin}$};
+\end{scope}
+
+\begin{scope}[every node/.style={square,thick,draw,minimum size=1cm,fill=gray!50,opacity=.2,text opacity=1}]
+    \node (y) at (3,4) {$\hat{y}$};
+\end{scope}
+
+\begin{scope}[>={Stealth[black]},
+              every node/.style={fill=white,circle},
+              %%every edge/.style={very thick, color=black}]
+              every edge/.style={thin, color=black}]
+    \path [->] (Color) edge[draw=black] (pink);
+    \path [->] (Store)  edge[draw=black] (M);
+    \path [->] (pink)  edge[draw=black] (y);
+    \path [->] (M)     edge[draw=black] (y);
+    
+\end{scope}
+
+\end{tikzpicture}
+\caption{\catmod accessing parameters}
+\label{fig:featTokenizerOWN}
+\end{figure*}
+
+
+%\begin{figure}[h!]
+%\centering
+%\begin{tikzpicture}[scale=0.8]
+%\begin{scope}[every node/.style={circle,thick,draw,minimum size=1.0cm}]
+%\begin{footnotesize}
+%    \node (muc) [fill=gray,opacity=.2,text opacity=1] at (1,1) {$\mu_{color}$};
+%    \node (gs) at (5,1) {$\gamma_{store}$};
+%    \node (y)   at (3,3) {$\hat{y}$} ;
+%\end{footnotesize}
+%\end{scope}
+%\begin{scope}[every node/.style={circle,thick,draw,minimum size=1.0cm,color=white,opacity=0.1,text opacity=1}]
+%    \node (*)[color=white]   at (3,2) {\textcolor{black}{*}} ;
+%\end{scope}
+%
+%\begin{scope}[>={Stealth[black]},
+%             every node/.style={fill=white,circle},
+%              %%every edge/.style={very thick, color=black}]
+%              every edge/.style={thick, color=black}]
+%    \path [->] (muc) edge[draw=black] (y);
+%    \path [->] (gs) edge[draw=black] (y);
+%%    \path [->] (F') edge[draw=black]  (P');
+%%    \path [->] (P) edge[draw=black, dashed]  (P');
+%\end{scope}
+%\end{tikzpicture}
+%\caption{\catmod}
+%\label{fig:catModel}
+%\end{figure}
+
+ with $\hat{y}$ the estimated sales. This toy model will be used as an example throughout the paper.
+
+We stress the fact that the \textit{symbolic} aspect applies to the input features: a \catmod can be used for regression, multi-class classification \dots
+
+In this simple model \ref{fig:catModel}, the parameter $\mu_{color}$ has thus a value for each color, and we aim to find the best ones in order to have a good predictive model. One of the main techniques to do that is gradient descent. Partly due to the very large amount of data often encountered in practice, \textit{stochastic} gradient descent is used. However, applying \textit{stochastic} gradient descent on \catmod raises an issue as common gradient update techniques are not designed for symbolic features: not every symbol of a symbolic feature is present in every observation of a dataset while regular numerical models assume that every feature is present on every observation. We propose an updated version of gradient estimation used to update parameters. Its specificity is to take into account the symbolic features. This paper links work on sparse gradient estimator and \ohe symbolic data that leads to a sparse but structured gradient.
+
+
+
+
+
+
+\catmod have to deal with numbers as parameters, not symbols. Symbolic data require a numerical embedding before they can be given as input.
+
+
+
+
+Many possible encodings exist:
+\begin{fleqn}
+\begin{align*}
+    &\bullet \text{ordinal encoding} &&\bullet \text{leave-one-out encoding}\\
+    &\bullet \text{\ohe}             &&\bullet \text{positional encoding} \quad \quad \\
+    &\bullet \text{binary encoding}  &&\bullet \text{\dots}\\
+    &\bullet \text{target encoding}  && \\
+\end{align*}
+\end{fleqn}
+
+% \begin{multicols*}{2}
+% \begin{itemize}
+%     \setlength\itemsep{-0.4em}
+%     \item ordinal encoding
+%     \item \ohe
+%     \item binary encoding
+%     \item target encoding
+% \end{itemize}
+
+% \begin{itemize}
+%     \setlength\itemsep{-0.4em}
+%     \item leave-one-out encoding 
+%     \item positional encoding
+%     \item \dots
+% \end{itemize}
+% \end{multicols*}
+
+% \begin{itemize}
+%     \setlength\itemsep{-0.4em}
+%     \item ordinal encoding
+%     \item \ohe
+%     \item binary encoding
+%     \item target encoding
+%     \item leave-one-out encoding 
+%     \item positional encoding
+%     \item \dots
+% \end{itemize}
+
+No universally good method of encoding exists and choice should always rely on data (alphabet cardinality, relationships between them \dots). In the following we will focus on \ohe because it is precisely what is done in a \catmod. Model \ref{catModel} \ohe is depicted in Equation \ref{eq:muEncoding} and Figure \ref{fig:featTokenizerOWN}.
+
+
+\ohe a symbolic variable with cardinality n is performed by creating a one-hot binary n-dimensional vector for each occurrence of the symbol. If there are few symbols, there are only a few newly created columns. On data stored in Table \ref{tab:catData}, \ohe the feature \textit{Color} creates the features $is_{blue}$ and $is_{pink}$. Thus \ohe is adapted to low cardinality features. Otherwise one might face the curse of dimensionality as described in \cite{curse}. Moreover, symbols present in the testing dataset but unseen in the training dataset are incompatible with \ohe as it makes the assumption that all symbols are present in the training dataset; the data is pre-processed according to them. Text encoding as presented in \cite{sundae} or \cite{textClassification} represents sentences in a latent space, as two different ones might have a very similar meaning and thus a very close representation in the latent space. This does not apply on symbolic data where each symbol has a very specific meaning.
+When those adequate conditions are not met, other encodings (such as leave-one-out) should be preferred. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \newpage
+% \begin{figure}[h!]
+% \centering
+% \begin{tikzpicture}[scale=0.8]
+% \begin{scope}[every node/.style={circle,thick,draw,minimum size=1.0cm}]
+% \begin{footnotesize}
+%     \node (mublue) at (1,0)     {$\mu_{blue}$};
+%     \node (isb)    at (3,0)     {$is_{blue}$};
+%     \node (mupink) at (5,0)     {$\mu_{pink}$};
+%     \node (isp)    at (7,0)     {$is_{pink}$};
+%     \node (mub)   [fill=blue,opacity=.2,text opacity=1] at (2.5,2.5) {$\mu_b$};
+%     \node (mup)   [fill=magenta,opacity=.2,text opacity=1] at (4.5,2.5) {$\mu_p$};
+%     \node (mu)    [fill=gray,opacity=.2,text opacity=1] at (5,4.5)   {$\mu$};
+    
+%     \node (gs)     at (7,2)     {$\gamma_{size}$};
+%     \node (y)      at (6,6.3)     {$\hat{y}$} ;
+%     \end{footnotesize}
+% \end{scope}
+
+% \begin{scope}[every node/.style={circle,thick,draw,minimum size=1.0cm,color=black,opacity=0.0,text opacity=1}]
+%     \node (*)  at (5.8, 5.35)  {*} ;
+%     \node (+)  at (4.5, 3.65) {+} ;
+%     \node (*b) at (2.3, 1.6)  {*} ;
+%     \node (*p) at (4.9, 1.6)  {*} ;
+% \end{scope}
+
+% \begin{scope}[>={Stealth[black]},
+%               every node/.style={fill=white,circle},
+%               %%every edge/.style={very thick, color=black}]
+%               every edge/.style={thick, color=black}]
+%     \path [->] (mublue) edge[draw=black] (mub);
+%     \path [->] (mupink) edge[draw=black] (mup);
+%     \path [->] (isb)    edge[draw=black] (mub);
+%     \path [->] (isp)    edge[draw=black] (mup);
+%     \path [->] (mup)    edge[draw=black] (mu) ;
+%     \path [->] (mub)    edge[draw=black] (mu) ;
+%     \path [->] (mu)     edge[draw=black] (y)  ;
+    
+%     \path [->] (gs) edge[draw=black] (y);
+% \end{scope}
+% \end{tikzpicture}
+% \caption{One-Hot encoded \catmod}
+% \label{fig:catModelOneHot}
+% \end{figure}
+
+% Of course this encoding is also done for $\gamma_{size}$.
+% \\
+% \textbf{\textcolor{red}{OR}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+Interpretability of the model is fundamental as explained by \cite{Stop} especially in high-stake contexts such as disease diagnostics, where explanability of the result is expected for the human expert to take his final decision.
+In this direction, using \ohe  is crucial. Having parameters directly related to the application semantic by giving access to their relation with the input symbols is a requirement for the design of white-box models. In model \ref{catModel}, $\mu_{blue}$ ($\mu_{pink}$ respectively) has a valuable meaning: this is the impact of the blue (pink respectively) color on the sales. Parameters value not only serve model prediction quality, they are also \textit{interpretable}.  On Model \ref{catModel}, $\mu_{blue} >\mu_{pink}$ means that the blue color sells better than the pink one. Not only is the prediction of the model explainable, but the model itself conveys meaning, even without inputs.
+
+Leave-one-out encoding turns the symbolic feature into \textbf{one} numerical feature. This has several advantages (no curse of dimensionality for example) but gives no directly interpretable parameters.
+
+\ohe leads to sparse but structured data by construction. Gradient descent on sparse data is an extensively studied subject: \cite{GDsparseData} \cite{FastLearningSparse}; \cite{LinearLearningSparseData}; \cite{SparseOnlineLearning} \dots The following also applies to sparse but structured data. As \ohe is not suited for high-cardinality symbolic “sparse” features we exclude such feature from the following, which is not restrictive for domains such as health or supply chain.

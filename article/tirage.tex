@@ -1,0 +1,44 @@
+\section{Uniform draw}\label{tirage}
+
+Let $Z$ be a non-empty finite set and $T \subset Z$ also non empty.
+
+We uniformly draw $m > 0$ elements in $Z$ with replacement. We focus on the first drawing where at least one of the $m$ drawn elements belongs to $T$. We note $\Tilde{K}$ this drawing. Thus:
+
+\begin{align}
+    \mathbb{P}(\Tilde{K} = 1) &= 1 - (\frac{\abs{Z}-\abs{T}}{\abs{Z}})^m = P_1\\
+    \mathbb{P}(\Tilde{K} = n) &= (1 - P_1)^{n-1} P_1
+\end{align}
+
+\begin{theorem}[Stoping time]\label{theorem:stop}
+$\esp{\Tilde{K}} = \frac{1}{P_1}$
+\end{theorem}
+
+
+
+\begin{proof}
+\begin{align*}
+    \esp{\Tilde{K}} = \sum_{n = 1}^{N} n \mathbb{P}(\Tilde{K} = n) &= \sum_{n = 1}^{N} n (1 - P_1)^{n-1} P_1\\
+    &= \frac{P_1}{1 - P_1} \sum_{n = 1}^{N} n  (1 - P_1)^{n} 
+\end{align*}
+
+For $ 0 < x < 1$  we get:
+
+\begin{align*}
+    \sum_{n = 1}^{\infty} n x^n &= \sum_{n = 1}^{\infty} x \frac{\partial x^n}{\partial x}\\
+                                &= x \frac{\partial }{\partial x} \sum_{n = 1}^{\infty} x^n\\
+                                &= x \frac{\partial }{\partial x} \sum_{n = 0}^{\infty} x^n\\
+                                &= x \frac{\partial }{\partial x} \frac{1}{1-x}\\
+                                &= \frac{x}{(1-x)^2}
+\end{align*}
+
+Then 
+
+\begin{align*}
+    \sum_{n = 1}^{\infty} n \mathbb{P}(\Tilde{K} = n) &= \frac{P_1}{1 - P_1} \frac{1-P_1}{P_{1}^2}\\
+    &= \frac{1}{P_1}
+\end{align*}
+\end{proof}
+
+\begin{remark}
+It is the same result if the drawings are done without replacement. The only difference is a highest $P_1$.
+\end{remark}

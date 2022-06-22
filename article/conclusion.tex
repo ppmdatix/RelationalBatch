@@ -1,0 +1,28 @@
+\section{Conclusions}\label{sec:conclusion}
+
+% \begin{itemize}
+%     \item Maxime \ok ? \no ?
+%     \item Thierry \ok ? \no ?
+%     \item Victor \ok ? \no ?
+% \end{itemize}
+
+
+
+% And our proposed method combined with \ohe, turns every gradient-compatible model into a \catmod! We've shown it even on neural networks. . Moreover our gradient estimator clearly helps convergence when dealing with one-hot encoded data. Indeed this estimator add prior knowledge we have on the data to the gradient, thus the gradient conveys all relevant information, which is the expected behavior.
+
+
+
+% In the notation Section \ref{notations} we have defined symbol groups by Equation \ref{eq:symbol}. This ``reverse engineer`` \ohe and there might be a better paradigm in order to tackle symbolic dataset via \catmod; this will be the natural following work of this one.
+
+
+This work addresses the issue of using stochastic gradient descent on symbolic data. We have shown how \ohe is needed for interpretable models. \secondContrib  otherwise it leads to incoherent gradient. The proposed gradient estimator solves this problem and rely on the observation that \mainContrib. This thus unlocks correct treatment of symbolic data for all gradient-based models. The code and all the details of the study is mainly open-sourced and demonstrates its utility on several datasets. 
+
+
+
+The main significance of this work is to highlight the lack of special treatment for symbolic data. They are unfairly underrepresented on public datasets and machine learning in general. We hope that this work will make researchers to take them more into considerations. 
+
+
+
+
+\section*{Acknowledgment}
+This work was supported by the University of Rouen and the french company Lokad. We would like to thank Gaëtan Delétoille and Antonio Cifonelli for interesting discussions on the topic. 

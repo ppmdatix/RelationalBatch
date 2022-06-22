@@ -1,0 +1,38 @@
+\section{Introduction}\label{sec:intro}
+% \begin{itemize}
+%     \item Maxime \ok ? \no ?
+%     \item Thierry \ok ? \no ?
+%     \item Victor \ok ? \no ?
+% \end{itemize}
+
+Symbolic data are present in many application domains, some on them with critical constraints such as health \cite{PublicHealth} or supply chain \cite{SCPricing}. They are opposed to numerical data as they are not represented by numbers, but by symbols. As a symbolic feature comes with an alphabet and conveys a specific meaning, it is fundamentally different from what we get with a numerical one. Recent gradient-based machine learning models have shown outstanding results on homogeneous data in areas such as speech recognition or computer vision \cite{w2v-BERT} \cite{ModelSoups}, and it is very tempting to use those models on symbolic data as well. In order to do so, symbolic data need a specific encoding such that they can comply with the requirements of most of the machine learning models that rely on numerical input representations, one of the most common being \ohe \cite{ohe}.
+
+While learning representations for the natural language processing has allowed for symbolic representations to be embedded into numerical ones, in a very efficient way, relying on distributional hypothesis of the language \cite{MLPandNLP}, other application domains more related to databases cannot benefit from the same hypothesis to train efficient embedding. Moreover, learning a representation frequently comes at the cost of losing the interpretability of the representation by domain experts. Model interpretability is fundamental in critical areas with high stake decisions such as health or supply chain \cite{Stop}.
+As it relies on a bijection between the symbolic alphabets and the encoded vector components, \ohe provides a very simple way to build interpretable models. Its main consequence is that the encoded vector is binary, high dimensional and sparse. One common solution is to use dimensionality reduction methods \cite{ExploringDimensionality} \cite{ModernDimensionReduction}, but again it comes at the expense of a loss of model interpretability.
+
+Recent works on tabular data  \cite{DeepTabularSurvey} \cite{RevisitingDeepForTabular}   have shown that stochastic gradient-based machine learning models using a simple \ohe can perform well also for symbolic data compared to other models, despite the known structural problems of \ohe. 
+%allows us to build interpretable models as every model's parameter is related to a symbol of the input. 
+Indeed, in this context, we face the issue that state-of-the-art stochastic gradient descent methods are not suited for one-hot encoded data. By default these methods assume the encoded vector as real valued vector which translates non-observed examples or features as numerical zeros, whereas they should be considered as a non-existing configurations. For example, the Adam optimizer \cite{adam} relies on the definition of momentum, which in this context updates parts of the gradient for the non-existing configurations. In this paper, a novel gradient estimator is introduced: \tecname (\tecnameAbrv), which takes into account 
+the structural properties of the encoded symbolic data and scale the gradient accordingly. 
+%Indeed \ohe is known to create sparse data by design. By doing so, the input representation may comprise non existing configurations of the symbolic input. Such regions of the input space  encode typical structural zero which are simply ignored by standards stochastic gradient optimization algorithms. In such regions, the gradient is mainly considered zero while it simply does not exist. For each observation every gradient of unconcerned parameter's symbol is artificially equal to zero due to \ohe of the data whereas they do not exists at all. The many recent works that deal with stochastic gradient on symbolic data such as \cite{RevisitingDeepForTabular} do not mention this fundamental issue.
+
+
+
+% After a survey on symbolic data in public datasets,  This estimator takes into account the symbolic aspect of the input feature and scale the gradient accordingly. \tecnameAbrv takes into account unbalancing in input symbolic features and correct it. We show what \tecnameAbrv minimizes in theory in the convex case and show its efficiency on 6 different datasets with multiple model architectures in practice. Thus we show that this new estimator performs better than common gradient estimators under similar settings on symbolic data.
+%% Reason to be
+
+% Our two main contributions are to state that:
+
+% \begin{itemize}
+%     \item \mainContrib.  
+%     \itme the introduction of a novel gradient estimator \tecnameAbrv.
+% \end{itemize}
+
+
+The paper is organized as follow: first we present a review of public datasets that contains symbolic features. Then, we present different encodings and focus on \ohe that allows us to build \catmod %(a definition is given in Section \ref{sec:encoding}). 
+Then, we tackle the problem of applying \textit{stochastic} gradient descent on these models that accepts input symbolic data by design. We solve this issue with a new gradient estimator and exhibit the actual loss it minimizes in the convex case. This work ends with multiple experiments to show the robustness of the new gradient estimator. 
+
+%Overall, the aim of this paper is to convince researchers to highly consider symbolic data and adapt their models, optimizers, benchmarks \dots to these key features.
+
+
+

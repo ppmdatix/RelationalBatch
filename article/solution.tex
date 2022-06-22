@@ -1,0 +1,150 @@
+\section{Solution: \tecname}
+
+
+% \begin{itemize}
+%     \item Maxime \ok ? \no ?
+%     \item Thierry \ok ? \no ?
+%     \item Victor \ok ? \no ?
+% \end{itemize}
+
+With all we've discussed, the solution is straight forward and very easy to implement.
+
+%%%%%%%%%%%%%%%%%%%
+% Let \catn{k} be the set of symbol groups for the $k^{th}$ feature and $\theta_{m}$ a symbolic parameter of the symbol $A_j$. With the notations from \ref{notations}: $\sum J_k = p$
+
+% In our example from table \ref{tab:catData} $\{ A_j \} = \{ blue ; pink \}$ and $\theta_m = \mu_{blue}$.
+
+%%%%%%%%%%%%%%%%%%%%%%
+
+
+%% \subsection{Do not update unconcerned parameters}\label{sec:DoNothing}
+If $\{symbol(obs) = s_k / obs \in batch\}$ is empty, parameters related to the $s_k$ symbol should \textbf{not} be updated. Indeed \mainContrib. The proposed gradient estimator thus make the difference between a zero gradient and a non-present gradient. Then one needs to count each symbol uses and to apply the unbiased gradient. Counting symbol uses allow us to compute unbiased gradient. Then:
+
+
+\begin{align*} 
+\ntm F &= \frac{\partial F}{\partial \theta_{m}}\\
+ &= \sum_{batch} \sum_{obs \in batch} \ntm f(obs) \\ 
+ &= \sum_{batch} \sum_{\underset{obs \in s_k}{obs \in batch}} \ntm f(obs)
+\end{align*}
+$S_k = \{obs \in batch / symbol(obs) = s_k \} $
+
+So one needs  to divide the accumulated gradient by the cardinality of $S_k = \{obs \in batch / symbol(obs) = s_k \} $. If this set is empty, parameters related to the $s_k$ symbol should not be updated. Again \mainContrib. This is presented in Algorithm \ref{alg:DivideByTheGood}.
+
+
+
+\begin{algorithm}
+\caption{\tecname}\label{alg:DivideByTheGood}
+\begin{algorithmic}[5]
+                
+\Require $\mathcal{Z}$: data
+\Require $update(\cdot  , \cdot  )$: chosen optimizer
+\Require $\theta_0$: Initial parameter vector 
+\State $t \gets 0$
+\While{$\theta_t$ not converged}
+    $t \gets t + 1$
+    \State Divide $Z$ in $Batches$
+    \For{batch $\in$ Batches}
+        \For{symbol $\in$ Alphabet}    
+            \State $c_{symbol} \gets 0$
+        \EndFor
+        \State $\textbf{g} \gets \vec{0}$
+        \For{X, y $\in$ batch}
+            \State $c_{symbol(X)} \gets c_{symbol(X)} + 1$
+            \State Compute $\nabla_{\theta_{t-1}} f_{\theta_{t-1}}(X)$ thanks to $y$
+            \State $\textbf{g} \gets \textbf{g} + \nabla_{\theta_{t-1}} f_{\theta_{t-1}}(X)$ \Comment{\textbf{\textcolor{blue}{\small accumulate gradient}}}
+        \EndFor
+        \State $\theta_{t} \gets \theta_{t-1}$
+        \For{$symbol \in Alphabet$}
+            \If{$c_{symbol} > 0 $}  \Comment{\textcolor{blue}{\small \mainContrib}}
+                \State $\theta_{t, symbol} \gets update(\theta_{t-1, symbol}, \frac{1}{c_{symbol}}\textbf{g}_{symbol})$ \Comment{\textbf{\textcolor{blue}{\small scaled gradient}}}
+            \EndIf
+        \EndFor
+    \EndFor 
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
+
+
+
+%% \subsection{What does it minimize}
+
+% \TODO : harmonize notations\\
+
+% \TODO : enlever le $\frac{1}{\# cat}$ pour être iso avec ce qu'on a écrit plus haut.\\
+
+% \TODO : si les catégories ont les mêmes tailles alors c'est la même chose ! elles forment une partition et $\#C$ est toujours le même.\\
+
+
+
+% \begin{equation}
+%     F(x) = \frac{1}{\# Symbols} \sum_{symbol} \sum_{obs \in \{ obs | s(obs) = symbol \} = S} \frac{1}{\# S} loss_x (obs)
+% \end{equation}
+
+
+% \begin{equation*}
+%     f_{\binom{M}{m}}(x) = \frac{1}{\# Symbols} \sum_{symbol} \sum_{obs \in = S \cap \binom{M}{m}} \frac{1}{\# S^m} loss_x (obs)
+% \end{equation*}
+
+With the current notations:
+
+
+
+\begin{equation}\label{eq:realLoss}
+    F_{\theta} = \frac{1}{p} \summ{k=1}{p} \sum_{X,y \in S_k}  \frac{1}{\# S_k} f_{\theta} (X, y)
+\end{equation}
+
+With such loss objective function, drawing random observations in $\mathcal{Z}$ does not give an unbiased gradient estimator.
+\begin{equation*}
+    F_{\binom{\mathcal{Z}}{m} \theta} = \frac{1}{p} \summ{k=1}{p} \sum_{X,y \in S_k \cap \binom{\mathcal{Z}}{m}}  \frac{1}{\#[ S_k \cap \binom{\mathcal{Z}}{m}]} f_{\theta} (X, y)
+\end{equation*}
+
+
+$F_{\binom{\mathcal{Z}}{m} \theta}$ is a random estimator of $F_{\theta}$ where $m$ observations (over the $\mathcal{Z}$) are uniformly drawn. It is the estimator used by Algorithm \ref{alg:DivideByTheGood}. This estimator is unbiased, proof can be found in appendices \ref{theorem:unbiased}:
+
+\begin{equation*}
+    \esp{\nabla F_{\binom{\mathcal{Z}}{m}}} = \nabla F_{\theta}
+\end{equation*}
+
+Which is a sufficient condition for convergence in the convex setting \cite{BachProof}.
+
+ 
+The loss function depicted in equation \ref{eq:realLoss} seems similar to loss used for classification with unbalanced \textbf{output} categories. Let recall that what we propose here is different as we consider unbalanced \textbf{input} symbols. 
+
+In the case where symbol groups have same size $C$ then the objective function resumes to:
+
+\begin{align*}
+    F_{\theta} &= \frac{1}{p}            \summ{k=1}{p} \sum_{X,y \in s_k} \frac{1}{\# s_k} f_{\theta} (X, y)\\
+               &= \frac{1}{p}            \summ{k=1}{p}  \frac{1}{C} \sum_{X,y \in s_k}       f_{\theta} (X, y)\\
+               &= \frac{1}{p \times C}   \sum_{X,y \in Z}                                      f_{\theta} (X, y)\\
+                &= \frac{1}{\mathcal{Z}} \sum_{X,y \in Z}                                      f_{\theta} (X, y)
+\end{align*}
+
+as the $p$ symbol groups form  a partition of $\mathcal{Z}$.
+
+
+
+ 
+In this case, our proposed gradient estimator is proportional to the classic one. If one uses the vanilla optimizer, \tecname is equivalent to the classic one with a bigger learning rate: 
+\begin{equation*}
+    \theta_t = \theta_{t-1} - \alpha g_t
+\end{equation*}
+
+
+But with other optimizers such as Adam or Adagrad are very sensitive to the learning rate, if too high, one might not converge. So even in the balanced case, it is better to have small learning rate and big gradient thanks to \tecname rather than big learning rate and small gradient. It is proven in the results Section \ref{Results}.
+
+
+\subsection{Comparison with other work}
+We completely agree on the following "not every update is informative about every feature due to the scarcity of nonzero entries" from \cite{Adagrad} (AdaGrad). Our proposed approach coincides on the report but differs on the way to tackle the issue. Our approach moves the encoding outside the gradient updates and does not make any assumption on the chosen optimizer. Thus our solution is totally compatible with AdaGrad. It has been tested and results are available in Section \ref{Results}.
+
+Our proposed solution, i.e. \tecname on one-hot-encoded data, is very similar to vector embedding. The main difference here is the cardinality of the symbolic features concerned. 
+
+
+
+
+
+
+\tecname aims to handle imbalanced input symbolic data. In order to handle imbalanced output data, data augmentation is often used \cite{dataAugmentationAlzeimer} \cite{SMOTE} \dots But this augmentation techniques apply on numerical input data. For symbolic data as input, this seems quite impossible to augment it: if rotating an image does not change the objects present on it, switching a binary value completely change the concerned observation.
+
+
+% \TODO : similar to ensemble tree ? NO
+% \TODO data augmentation for categorical data ? NO

@@ -1,0 +1,145 @@
+\documentclass[preprint,12pt,authoryear]{elsarticle}
+%%\usepackage[final]{sty/neurips_2021}
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{geometry}
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{xcolor}         % colors
+\usepackage{svg}
+\usepackage{xcolor,listings}
+\usepackage[ide]{sty/listings-ceylon}
+\usepackage{syntax}
+\usepackage{sty/bcprules}
+\usepackage{tikz}
+\usepackage{multicol}
+\usetikzlibrary{arrows.meta}
+\usepackage{appendix}
+\usepackage{pgfplots}
+\usepackage{arydshln}
+\usepackage{subcaption}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{draftwatermark}
+\SetWatermarkLightness{0.95}
+\SetWatermarkAngle{25}
+\SetWatermarkScale{5}
+\SetWatermarkFontSize{5cm}
+\SetWatermarkText{DRAFT}
+
+\usepackage{pdfpages}
+\usepackage{mathrsfs}
+\usetikzlibrary{arrows}
+\usetikzlibrary[patterns]
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{decorations.pathreplacing,matrix}
+\tikzset{ 
+table/.style={
+  matrix of math nodes,
+  row sep=-\pgflinewidth,
+  column sep=-\pgflinewidth,
+  nodes={rectangle,text width=1em,align=center},
+  text depth=1.ex,
+  text height=1ex,
+  nodes in empty cells,
+  left delimiter=[,
+  right delimiter={]},
+  ampersand replacement=\&
+}
+}
+
+\usepackage{minted}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\newtheorem{remark}{Remark}
+\newtheorem{defi}{Definition}
+\newtheorem{Vocabulary}{Vocabulary}
+\newtheorem{notation}{Notation}
+\newtheorem{defo}{Definition}
+\newtheorem{ex}{Example}
+\newtheorem{theorem}{Theorem}[section]
+\newcommand{\argmax}{\ensuremath{arg\,max}}
+\newcommand{\argmin}{\ensuremath{arg\,min}}
+\newcommand{\ntjk}{\ensuremath{\nabla{\theta_{J_k}}}}
+\newcommand{\ntm}{\ensuremath{\nabla_{\theta_{m}}}}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\abs}[1]{\mid #1 \mid}
+\newcommand{\tecname}{\textbf{gradient  estimator for symbolical features }}
+\newcommand{\tecnameAbrv}{\textbf{GSE }}
+\newcommand{\ohe}{\text{one-hot-encoding }}
+\newcommand{\catmod}{ \textcolor{red}{\textit{symbolic models }}}
+\newcommand{\TODO}{\textbf{\Large \textcolor{red}{TODO} }}
+\newcommand{\iif}{ \Leftrightarrow}
+\newcommand{\mainContrib}{\textbf{a non-present gradient is not a zero-gradient}}
+\newcommand{\secondContrib}{\textbf{Encoding symbolic data is not part of the gradient-exposed part of the model.}}
+\newcommand{\ok}{\textbf{\textcolor{green}{\checkmark}}}
+\newcommand{\no}{\textbf{\textcolor{red}{$\times$}}}
+\newcommand{\summ}[2]{\underset{#1}{\overset{#2}{\sum}}}
+\newcommand{\esp}[1]{\mathbb{E}[#1]}
+\newcommand{\bold}[1]{\textbf{#1}}
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+
+\usepackage{xcolor, soul}
+\definecolor{lightblue}{rgb}{0.9, 0.9, 1.0}
+\definecolor{ffqqff}{rgb}{1,0,1}
+\sethlcolor{lightblue} 
+
+
+\begin{document}
+\begin{frontmatter}
+
+\title{Stochastic Gradient Descent with \tecname}
+\maketitle
+
+
+%%%%%%%%Authors 
+\affiliation[Lokad]{organization={Lokad},
+            city={Paris},
+            country={FRANCE}}
+\affiliation[Litis]{organization={Litis},
+            city={Rouen},
+            country={FRANCE}}
+\author[Lokad,Litis]{Paul Peseux\fnref{Corauthor}}
+\author[Litis]{Maxime Berar}
+\author[Litis]{Thierry Paquet}
+\author[Lokad]{Victor Nicollet}
+
+\fntext[Corauthor]{corresponding author, paul.peseux@lokad.com}
+
+\author{}
+
+
+
+\input{abstract}
+\begin{keyword}
+symbolic data \sep gradient descent \sep online learning \sep gradient estimation
+\end{keyword}
+%%\tableofcontents
+\end{frontmatter}
+\input{intro/intro}
+%\input{datasetReview}
+\input{CatEncoding}
+\input{Problem}
+\input{deep}
+\input{solution}
+
+
+\input{Experimental}
+\input{Discussion}
+
+\input{conclusion}
+
+\bibliographystyle{elsarticle-harv} 
+\bibliography{bib/sample}
+%%\newpage
+\input{annex/annex}
+\input{tirage}
+\input{Estimator}
+\end{document}
+\endinput
