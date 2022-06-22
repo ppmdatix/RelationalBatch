@@ -8,7 +8,7 @@
 
 
 
-Most deep architectures are built to support numerical data such as image or audio but \ohe approach has already been applied by \cite{RevisitingDeepForTabular} for example and is called \textit{Feature Tokenizer}. Applying \textbf{one-hot-encoding} to feed neural networks is theoretically equivalent to use a different network for each symbol. We illustrate that on a dense linear layer as depicted in Figures \ref{fig:catModelOneHot}. This use of different networks for each symbols raises the issue depicted in \ref{sec:motication} when used with \textit{batch} during training. Gradient estimation done by \textit{batch} implies that the parameters are used on every observation, which totally makes sense for classical Deep Learning (i.e. with no one-hot encoded data). If a symbol is not present in a \textit{batch}, it means that there is no accumulated gradient, which is different than accumulated gradient is zero.
+Most deep architectures are built to support numerical data such as image or audio but \ohe approach has already been applied by \cite{RevisitingDeepForTabular} for example and is called \textit{Feature Tokenizer}. Applying \textbf{one-hot-encoding} to feed neural networks is theoretically equivalent to use a different network for each symbol. We illustrate that on a dense linear layer as depicted in Figures \ref{fig:catModelOneHot}. This use of different networks for each symbols raises the issue depicted in Section \ref{sec:motication} when used with \textit{batch} during training. Gradient estimation done by \textit{batch} implies that the parameters are used on every observation, which totally makes sense for classical Deep Learning (i.e. with no one-hot encoded data). If a symbol is not present in a \textit{batch}, it means that there is no accumulated gradient, which is different than accumulated gradient is zero.
 
 
 
@@ -133,7 +133,6 @@ Most deep architectures are built to support numerical data such as image or aud
 \caption{dense layer relative to she \textit{green} symbol}
 \label{fig:catModelOneHotPART2}
 \end{subfigure}
-
 \caption{\ohe for neural networks}
 \label{fig:catModelOneHot}
 \end{figure*}

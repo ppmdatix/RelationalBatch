@@ -1,10 +1,10 @@
 \section{Experimental and Results}\label{Results}
 
-\begin{itemize}
-    \item Maxime \ok ? \no ?
-    \item Thierry \ok ? \no ?
-    \item Victor \ok ? \no ?
-\end{itemize}
+% \begin{itemize}
+%     \item Maxime \ok ? \no ?
+%     \item Thierry \ok ? \no ?
+%     \item Victor \ok ? \no ?
+% \end{itemize}
 
 We have implemented Algorithm \ref{alg:DivideByTheGood} in two different cases and with two different languages : symbolic models and deep learning models using encoded symbolic data. In both settings, we aim to measure the impact of the \tecname. As a consequence the chosen metric will be the efficiency difference with the current treatment of symbolic parameters in batch gradient descent. The public datasets presented in table \ref{tab:datasetChar} will be used for evaluation as well as a private dataset from the supply chain domain.
 %% As a consequence we do not compare anything to the state of the art, but we compare established models with their updated version with the \tecname.
@@ -83,7 +83,7 @@ As seen table \ref{tab:envisionResult}, the relational batch performed better wi
 
 We have successfully deployed to production such \catmod at Lokad, a french company specialized in supply chain optimization, in order to weekly forecast sales of a large retail company. The forecast is done at the item level. The dataset contains 3 years of history and concerns more than $13$ millions different items.
 
-The implemented \catmod is similar\footnote{we do not disclose the actual model for confidentiality reasons} to:
+The implemented \catmod is similar\footnote{we do not disclose the actual model for confidentiality reasons.} to:
 
 %%\begin{equation*}
 \begin{align*}
@@ -114,15 +114,16 @@ the Adult Census Income (ACI) dataset presented in \cite{incomeDataset} that aim
 In order to only measure the impact of the \tecname, we \textit{only} use those symbolic variables in our experiments. Those datasets tasks are quiet easy. As a consequence we use a very small network to highlight our approach. Our network is made of 3 dense layers of sizes $[4,8,4]$ with a batch of size $128$. We also perform experiments on a ResNet-like network that give same results. We use the $l_2$ loss. We also used the same ResNet-like network than \cite{RevisitingDeepForTabular}.
 We have tested three different optimizer with their default settings: SGD (vanilla), Adagrad and Adam.
 
-Results are reproducible in the repository and are recorded in Tables \ref{tab:resultsMLP32} \ref{tab:resultsRESNET32} \ref{tab:resultsMLP64} \ref{tab:resultsRESNET64} \ref{tab:resultsMLP128}  \ref{tab:resultsRESNET128} \ref{tab:resultsMLP256} \ref{tab:resultsRESNET256} \ref{tab:resultsMLP512} \ref{tab:resultsRESNET512} \ref{tab:resultsMLP1024}      \ref{tab:resultsRESNET1024} in appendices. On the different datasets we have worked on, we always see an improvement of the loss on the testing dataset using the \tecname. This proves the need to specifically handle stochastic gradient on symbolic data. Results in different settings demonstrate the advantage to use \tecname whatever the optimizer. Among other things, AdaGrad tries to handle gradient on sparse data (which includes one-hot encoded data) but we see a clear improvement on that task.
+Results are reproducible in the repository and are recorded in Tables \ref{tab:resultsMLP32} \ref{tab:resultsRESNET32} \ref{tab:resultsMLP64} \ref{tab:resultsRESNET64} \ref{tab:resultsMLP128}  \ref{tab:resultsRESNET128} \ref{tab:resultsMLP256} \ref{tab:resultsRESNET256} \ref{tab:resultsMLP512} \ref{tab:resultsRESNET512} \ref{tab:resultsMLP1024}      \ref{tab:resultsRESNET1024} in appendices. On the different datasets we have worked on, we always see an improvement of the loss on the testing dataset using the \tecname. A specific focus on the ACI dataset is done in Figure \ref{fig:ACIresults}.
+This proves the need to specifically handle stochastic gradient on symbolic data. Results in different settings demonstrate the advantage to use \tecname whatever the optimizer. Among other things, AdaGrad tries to handle gradient on sparse data (which includes one-hot encoded data) but we see a clear improvement on that task.
 
 
 
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.7\linewidth]{figures/AdultIncomelossResults.png}
-  \caption{Results on the ACI dataset. The dashed curves represents experiments wit \tecnameAbrv  and shows an improvement on the loss for every optimizer used}
-  \label{fig:}
+  \caption{Results on the ACI dataset. The dashed curves represents experiments wit \tecnameAbrv  and shows an improvement on the loss for every optimizer used.}
+  \label{fig:ACIresults}
 \end{figure}
 
 

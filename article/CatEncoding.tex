@@ -29,16 +29,14 @@
 \end{table}
 
 Let us denote ``\catmod`` the set of models that accept symbolic features by design and are numerical , i.e. their parameters can be updated through gradient descent.
-By symbolic features, we denote a feature $s$ belonging to an alphabet of $n_{s}$ symbols $\left\{s_1,\cdots, s_{n_{s}} \right\}$, whose cardinality depends on the data. In Table \ref{tab:catData}, color and stores are symbolic features, and pink and blue are symbols, and forms the color alphabet.
-
-For example logistic regression introduced by \cite{cox1958regression} belongs to this set of models. 
+By symbolic features, we denote a feature $s$ belonging to an alphabet of $n_{s}$ symbols $\left\{s_1,\cdots, s_{n_{s}} \right\}$, whose cardinality depends on the data. In Table \ref{tab:catData}, color and stores are symbolic features, and pink and blue are symbols, and forms the color alphabet. For example logistic regression introduced by \cite{cox1958regression} belongs to this set of models. 
 Wide models described in \cite{wideAndDeep} also correspond to this.
 However, Decision Trees do not as they cannot be considered numerical models, but rather ensemble models. Regular neural networks are not \catmod either because they cannot use raw symbolic input data and need to be encoded.
 
 
-A straightforward \catmod for inputs taken from Table \ref{tab:catData} could be \ref{catModel} and is represented through the graphical representation depicted in Figure  \ref{fig:featTokenizerOWN}
+A straightforward \catmod for inputs taken from Table \ref{tab:catData} could be \ref{catModel} and is represented through the graphical representation depicted in Figure \ref{fig:featTokenizerOWN}
 
-\begin{equation}\label{fig:catModel}
+\begin{equation}\label{catModel}
     \hat{y} = \mu_{color} \times \gamma_{store}
 \end{equation}
 
@@ -142,7 +140,7 @@ A straightforward \catmod for inputs taken from Table \ref{tab:catData} could be
 
 We stress the fact that the \textit{symbolic} aspect applies to the input features: a \catmod can be used for regression, multi-class classification \dots
 
-In this simple model \ref{fig:catModel}, the parameter $\mu_{color}$ has thus a value for each color, and we aim to find the best ones in order to have a good predictive model. One of the main techniques to do that is gradient descent. Partly due to the very large amount of data often encountered in practice, \textit{stochastic} gradient descent is used. However, applying \textit{stochastic} gradient descent on \catmod raises an issue as common gradient update techniques are not designed for symbolic features: not every symbol of a symbolic feature is present in every observation of a dataset while regular numerical models assume that every feature is present on every observation. We propose an updated version of gradient estimation used to update parameters. Its specificity is to take into account the symbolic features. This paper links work on sparse gradient estimator and \ohe symbolic data that leads to a sparse but structured gradient.
+In this simple model \ref{catModel}, the parameter $\mu_{color}$ has thus a value for each color, and we aim to find the best ones in order to have a good predictive model. One of the main techniques to do that is gradient descent. Partly due to the very large amount of data often encountered in practice, \textit{stochastic} gradient descent is used. However, applying \textit{stochastic} gradient descent on \catmod raises an issue as common gradient update techniques are not designed for symbolic features: not every symbol of a symbolic feature is present in every observation of a dataset while regular numerical models assume that every feature is present on every observation. We propose an updated version of gradient estimation used to update parameters. Its specificity is to take into account the symbolic features. This paper links work on sparse gradient estimator and \ohe symbolic data that leads to a sparse but structured gradient.
 
 
 
@@ -195,7 +193,7 @@ Many possible encodings exist:
 No universally good method of encoding exists and choice should always rely on data (alphabet cardinality, relationships between them \dots). In the following we will focus on \ohe because it is precisely what is done in a \catmod. Model \ref{catModel} \ohe is depicted in Equation \ref{eq:muEncoding} and Figure \ref{fig:featTokenizerOWN}.
 
 
-\ohe a symbolic variable with cardinality n is performed by creating a one-hot binary n-dimensional vector for each occurrence of the symbol. If there are few symbols, there are only a few newly created columns. On data stored in Table \ref{tab:catData}, \ohe the feature \textit{Color} creates the features $is_{blue}$ and $is_{pink}$. Thus \ohe is adapted to low cardinality features. Otherwise one might face the curse of dimensionality as described in \cite{curse}. Moreover, symbols present in the testing dataset but unseen in the training dataset are incompatible with \ohe as it makes the assumption that all symbols are present in the training dataset; the data is pre-processed according to them. Text encoding as presented in \cite{sundae} or \cite{textClassification} represents sentences in a latent space, as two different ones might have a very similar meaning and thus a very close representation in the latent space. This does not apply on symbolic data where each symbol has a very specific meaning.
+\ohe a symbolic variable with cardinality n is performed by creating n binary vectors for each occurrence of the symbol. If there are few symbols, there are only a few newly created columns. On data stored in Table \ref{tab:catData}, \ohe the feature \textit{Color} creates the features $is_{blue}$ and $is_{pink}$. Thus \ohe is adapted to low cardinality features. Otherwise one might face the curse of dimensionality as described in \cite{curse}. Moreover, symbols present in the testing dataset but unseen in the training dataset are incompatible with \ohe as it makes the assumption that all symbols are present in the training dataset; the data is pre-processed according to them. Text encoding as presented in \cite{sundae} or \cite{textClassification} represents sentences in a latent space, as two different ones might have a very similar meaning and thus a very close representation in the latent space. This does not apply on symbolic data where each symbol has a very specific meaning.
 When those adequate conditions are not met, other encodings (such as leave-one-out) should be preferred. 
 
 
